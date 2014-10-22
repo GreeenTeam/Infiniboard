@@ -8,6 +8,7 @@ import android.view.View;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.content.Context;
+import java.nio.Buffer;
 
 /**
  * Created by Nick on 10/6/2014.
@@ -23,15 +24,20 @@ public class Board extends View {
     public Marker currentMarker;
     float lastEventX;
     float lastEventY;
+    boolean inSelector;
+    float originX;
+    float originY;
+    Selector selector = new Selector();
 
     public Board(Context context, AttributeSet attrs) {
         super(context, attrs);
         //initializes the four markers for the tray
-        tray[0] = new Marker(0xFF000000);
-        tray[1] = new Marker(0xFF009150);
-        tray[2] = new Marker(0xFF0070BB);
-        tray[3] = new Marker(0xFFDA2C43);
-        tray[4] = new Marker(0xFFffffff);
+        tray[0] = new Marker(0xFF000000,0);
+        tray[1] = new Marker(0xFF009150,1);
+        tray[2] = new Marker(0xFF0070BB,2);
+        tray[3] = new Marker(0xFFDA2C43,3);
+        tray[4] = new Marker(0xFFffffff,4);
+        tray[4].setStrokeWidth(45);
         currentMarker = tray[0];
         setupDrawing();
     }
@@ -76,27 +82,51 @@ public class Board extends View {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         drawPaint.setColor(currentMarker.getColor());
-
+        drawPaint.setStrokeWidth(currentMarker.getStrokeWidth());
         //get the coordinates of the touch event.
         float eventX = event.getX();
         float eventY = event.getY();
+        if(inSelector){
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
 
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                //set a new starting point
-                drawPath.moveTo(eventX, eventY);
-                break;
-            case MotionEvent.ACTION_MOVE:
-                //Connect the points
-                //This should be slightly smother than the line to became it uses quad equation
-                drawPath.quadTo(lastEventX, lastEventY, eventX, eventY);
-                break;
-            case MotionEvent.ACTION_UP:
-                drawCanvas.drawPath(drawPath, drawPaint);
-                drawPath.reset();
-                break;
-            default:
-                return false;
+                    drawPath.moveTo(eventX, eventY);
+                    originX = eventX;
+                    originY = eventY;
+                    break;
+                case MotionEvent.ACTION_MOVE:
+
+                    drawPath.reset();
+                    drawPath.addRect(originX,originY,eventX,eventY, Path.Direction.CW);
+                    break;
+                case MotionEvent.ACTION_UP:
+
+                    drawPath.reset();
+                    selector.setSelection( Bitmap.createBitmap(canvasBitmap,(int) originX,(int) originY,(int) (eventX-originX) ,(int) (eventY-originY)));
+                    selector.setCurrentX((int)originX);
+                    selector.setCurrentY((int)originY);
+                    break;
+                default:
+                    return false;
+            }
+        }else{
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    //set a new starting point
+                    drawPath.moveTo(eventX, eventY);
+                    break;
+                case MotionEvent.ACTION_MOVE:
+                    //Connect the points
+                    //This should be slightly smother than the line to became it uses quad equation
+                    drawPath.quadTo(lastEventX, lastEventY, eventX, eventY);
+                    break;
+                case MotionEvent.ACTION_UP:
+                    drawCanvas.drawPath(drawPath, drawPaint);
+                    drawPath.reset();
+                    break;
+                default:
+                    return false;
+            }
         }
         lastEventX = eventX;
         lastEventY = eventY;
@@ -116,6 +146,10 @@ public class Board extends View {
     }
     public void changeMarkerWidth(int width){
         currentMarker.setStrokeWidth(width);
+    }
+
+    public void addSelectionToCanvas (int x, int y){
+        drawCanvas.drawBitmap(selector.getSelection(),x,y,null);
     }
 
 }
