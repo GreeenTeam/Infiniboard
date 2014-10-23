@@ -2,17 +2,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    >
+    android:background= "#696969" >
 
-  <!-- Marker Tray Layout -->
+    <!-- Marker Tray Layout -->
 
     <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#696969"
         android:orientation="horizontal"
         android:gravity="center|bottom"
+        android:visibility="gone"
         >
 
         <Button
@@ -76,26 +76,16 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#FFFFFF"
+        android:background="#696969"
         android:orientation="vertical"
         android:gravity="center|bottom"
+
+
         >
 
-
-
-        <LinearLayout
-            android:id = "@+id/layer_over_board"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#FFFFFF"
-            >
-
-
-
-            <RelativeLayout
+        <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                >
+                android:layout_height="match_parent">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -109,58 +99,559 @@
                 </RelativeLayout>
 
                 <LinearLayout
-                    android:id = "@+id/intro"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:orientation="vertical">
+                            android:id = "@+id/intro"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:orientation="vertical">
 
-                    <ImageView
-                        android:id="@+id/intro_image"
-                        android:layout_width="100dp"
-                        android:layout_height="100dp"
-                        android:src = "@drawable/draft1"
-                        android:layout_centerVertical="true"
-                        android:layout_centerHorizontal="true"
-                        android:paddingBottom="10dp"/>
+                            <ImageView
+                                android:id="@+id/intro_image"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:src = "@drawable/ic_launcher"
+                                android:layout_centerVertical="true"
+                                android:layout_centerHorizontal="true"
+                                android:paddingBottom="10dp"/>
 
-                    <TextView
-                        android:id="@+id/intro_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceLarge"
-                        android:text="Write to Begin..."
-                        android:textColor="#696969"
-                        android:layout_centerVertical="true"
-                        android:layout_centerHorizontal="true"
-                        android:gravity="center"
-                        android:focusable="true"
-                        android:fontFamily="sans-serif-light" />
-                </LinearLayout>
+                            <TextView
+                                android:id="@+id/intro_text"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textAppearance="?android:attr/textAppearanceLarge"
+                                android:text="Write to Begin..."
+                                android:textColor="#696969"
+                                android:layout_centerVertical="true"
+                                android:layout_centerHorizontal="true"
+                                android:gravity="center"
+                                android:focusable="true"
+                                android:fontFamily="sans-serif-light" />
+                        </LinearLayout>
 
                 <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center|bottom"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentStart="true"
-                    android:paddingBottom="5dp">
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center|bottom"
+                            android:paddingBottom="5dp">
 
-                    <!-- Menu Button -->
-                    <Button
-                        android:layout_width="25dp"
-                        android:layout_height="25dp"
-                        android:onClick="toggleMenu"
-                        android:id="@+id/menu_button"
-                        android:background = "@drawable/menu"
-                        android:gravity="center"
-                    />
+                            <!-- Menu Button -->
+                            <Button
+                                android:layout_width="25dp"
+                                android:layout_height="25dp"
+                                android:onClick="toggleMenu"
+                                android:id="@+id/menu_button"
+                                android:background = "@drawable/menu"
+                                android:gravity="center"
+                                />
 
 
-                </RelativeLayout>
-            </RelativeLayout>
-        </LinearLayout>
-    </LinearLayout>
+                        </RelativeLayout>
+
+                <!-- RADIAL BUTTON -->
+
+
+                <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:id = "@+id/bubble_menu">
+
+                            <com.infiniboard.greenteam.infiniboard.BackButton
+                                android:layout_width="40dp"
+                                android:layout_height="40dp"
+                                android:layout_marginBottom="70dp"
+                                android:id = "@+id/back_button"
+                                android:layout_gravity="center|bottom"
+                                android:background="@drawable/circlebutton"
+                                android:text="Back"
+                                android:textColor="#FFFFFF"
+                                android:textSize="13sp"
+                                android:alpha = ".5"
+                                android:onClick = "goToPreviousMenu"
+                                android:visibility="gone"
+                                android:enabled="false"
+                                />
+                            <!-- MAIN MENU -->
+
+                            <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:id = "@+id/bubble_menu_main"
+                                android:visibility="gone">
+
+
+
+                                <Button
+                                    android:id = "@+id/boards"
+                                    android:layout_gravity="center|bottom"
+                                    android:layout_marginBottom="5dp"
+                                    android:layout_marginLeft="150dp"
+                                    android:layout_width="80dp"
+                                    android:layout_height="80dp"
+                                    android:text="Boards"
+                                    android:textColor="#FFFFFF"
+                                    android:textSize="13sp"
+                                    android:paddingTop="10dp"
+                                    android:paddingBottom="5dp"
+                                    android:drawableTop="@drawable/board"
+                                    android:drawablePadding="-10dp"
+                                    android:onClick="showBoardMenu"
+                                    android:background="@drawable/circlebutton"/>
+                                <Button
+                                    android:id = "@+id/anchors"
+                                    android:layout_gravity="center|bottom"
+                                    android:layout_marginBottom="111.06dp"
+                                    android:layout_marginLeft="106.06dp"
+                                    android:layout_width="80dp"
+                                    android:layout_height="80dp"
+                                    android:text="Anchors"
+                                    android:textColor="#FFFFFF"
+                                    android:textSize="13sp"
+                                    android:paddingTop="10dp"
+                                    android:paddingBottom="5dp"
+                                    android:drawableTop="@drawable/anchor"
+                                    android:drawablePadding="-10dp"
+                                    android:onClick="showAnchorMenu"
+                                    android:background="@drawable/circlebutton"/>
+                                <Button
+                                    android:id = "@+id/select"
+                                    android:layout_gravity="center|bottom"
+                                    android:layout_marginBottom="155dp"
+                                    android:layout_marginLeft="0dp"
+                                    android:layout_width="80dp"
+                                    android:layout_height="80dp"
+                                    android:text="Select"
+                                    android:textColor="#FFFFFF"
+                                    android:textSize="13sp"
+                                    android:paddingTop="10dp"
+                                    android:paddingBottom="5dp"
+                                    android:drawablePadding="-10dp"
+                                    android:drawableTop="@drawable/select"
+                                    android:onClick="setSelectMode"
+                                    android:background="@drawable/circlebutton"/>
+                                <Button
+                                    android:id = "@+id/size"
+                                    android:layout_gravity="center|bottom"
+                                    android:layout_marginBottom="111.06dp"
+                                    android:layout_marginLeft="-106.06dp"
+                                    android:layout_width="80dp"
+                                    android:layout_height="80dp"
+                                    android:text="Size"
+                                    android:textColor="#FFFFFF"
+                                    android:textSize="13sp"
+                                    android:paddingTop="10dp"
+                                    android:paddingBottom="5dp"
+                                    android:drawablePadding="-10dp"
+                                    android:drawableTop="@drawable/size"
+                                    android:onClick="showSizeMenu"
+                                    android:background="@drawable/circlebutton"/>
+
+                                <Button
+                                    android:id = "@+id/color"
+                                    android:layout_gravity="center|bottom"
+                                    android:layout_marginBottom="5dp"
+                                    android:layout_marginLeft="-150dp"
+                                    android:layout_width="80dp"
+                                    android:layout_height="80dp"
+                                    android:text="Color"
+                                    android:textColor="#FFFFFF"
+                                    android:textSize="13sp"
+                                    android:paddingTop="10dp"
+                                    android:paddingBottom="5dp"
+                                    android:drawablePadding="-10dp"
+                                    android:drawableTop="@drawable/color"
+                                    android:onClick="showColorMenu"
+                                    android:background="@drawable/circlebutton"/>
+
+                            </FrameLayout>
+
+                            <!-- SELECT MENU 1 -->
+
+                            <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:id = "@+id/bubble_menu_select_1"
+                                android:visibility="gone">
+
+                                <Button
+                                    android:id = "@+id/more_1"
+                                    android:layout_gravity="center|bottom"
+                                    android:layout_marginBottom="5dp"
+                                    android:layout_marginLeft="150dp"
+                                    android:layout_width="80dp"
+                                    android:layout_height="80dp"
+                                    android:text="More"
+                                    android:textColor="#FFFFFF"
+                                    android:textSize="13sp"
+                                    android:paddingTop="10dp"
+                                    android:paddingBottom="5dp"
+                                    android:drawableTop="@drawable/more"
+                                    android:drawablePadding="-10dp"
+                                    android:onClick="showSelectMenu2"
+                                    android:background="@drawable/circlebutton"/>
+                                <Button
+                                    android:id = "@+id/move"
+                                    android:layout_gravity="center|bottom"
+                                    android:layout_marginBottom="111.06dp"
+                                    android:layout_marginLeft="106.06dp"
+                                    android:layout_width="80dp"
+                                    android:layout_height="80dp"
+                                    android:text="Move"
+                                    android:textColor="#FFFFFF"
+                                    android:textSize="13sp"
+                                    android:paddingTop="10dp"
+                                    android:paddingBottom="5dp"
+                                    android:drawableTop="@drawable/move"
+                                    android:drawablePadding="-10dp"
+                                    android:onClick="moveSelection"
+                                    android:background="@drawable/circlebutton"/>
+                                <Button
+                                    android:id = "@+id/scale"
+                                    android:layout_gravity="center|bottom"
+                                    android:layout_marginBottom="155dp"
+                                    android:layout_marginLeft="0dp"
+                                    android:layout_width="80dp"
+                                    android:layout_height="80dp"
+                                    android:text="Scale"
+                                    android:textColor="#FFFFFF"
+                                    android:textSize="13sp"
+                                    android:paddingTop="10dp"
+                                    android:paddingBottom="5dp"
+                                    android:drawablePadding="-10dp"
+                                    android:drawableTop="@drawable/scale"
+                                    android:onClick="scaleSelection"
+                                    android:background="@drawable/circlebutton"/>
+                                <Button
+                                    android:id = "@+id/rotate"
+                                    android:layout_gravity="center|bottom"
+                                    android:layout_marginBottom="111.06dp"
+                                    android:layout_marginLeft="-106.06dp"
+                                    android:layout_width="80dp"
+                                    android:layout_height="80dp"
+                                    android:text="Rotate"
+                                    android:textColor="#FFFFFF"
+                                    android:textSize="13sp"
+                                    android:paddingTop="10dp"
+                                    android:paddingBottom="5dp"
+                                    android:drawablePadding="-10dp"
+                                    android:drawableTop="@drawable/rotate"
+                                    android:onClick="rotateSelection"
+                                    android:background="@drawable/circlebutton"/>
+                                <Button
+                                    android:id = "@+id/colorize"
+                                    android:layout_gravity="center|bottom"
+                                    android:layout_marginBottom="5dp"
+                                    android:layout_marginLeft="-150dp"
+                                    android:layout_width="80dp"
+                                    android:layout_height="80dp"
+                                    android:text="Colorize"
+                                    android:textColor="#FFFFFF"
+                                    android:textSize="13sp"
+                                    android:paddingTop="10dp"
+                                    android:paddingBottom="5dp"
+                                    android:drawablePadding="-10dp"
+                                    android:drawableTop="@drawable/colorize"
+                                    android:onClick="colorizeSelection"
+                                    android:background="@drawable/circlebutton"/>
+
+                            </FrameLayout>
+
+                            <!-- SELECT MENU 2 -->
+
+                            <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:id = "@+id/bubble_menu_select_2"
+                                android:visibility="gone">
+
+                                <Button
+                                    android:id = "@+id/more_2"
+                                    android:layout_gravity="center|bottom"
+                                    android:layout_marginBottom="5dp"
+                                    android:layout_marginLeft="150dp"
+                                    android:layout_width="80dp"
+                                    android:layout_height="80dp"
+                                    android:text="More"
+                                    android:textColor="#FFFFFF"
+                                    android:textSize="13sp"
+                                    android:paddingTop="10dp"
+                                    android:paddingBottom="5dp"
+                                    android:drawableTop="@drawable/more"
+                                    android:drawablePadding="-10dp"
+                                    android:onClick="showSelectMenu3"
+                                    android:background="@drawable/circlebutton"/>
+
+                                <Button
+                                    android:id = "@+id/paste"
+                                    android:layout_gravity="center|bottom"
+                                    android:layout_marginBottom="111.06dp"
+                                    android:layout_marginLeft="106.06dp"
+                                    android:layout_width="80dp"
+                                    android:layout_height="80dp"
+                                    android:text="Paste"
+                                    android:textColor="#FFFFFF"
+                                    android:textSize="13sp"
+                                    android:paddingTop="10dp"
+                                    android:paddingBottom="5dp"
+                                    android:drawableTop="@drawable/paste"
+                                    android:drawablePadding="-10dp"
+                                    android:onClick="pasteSelection"
+                                    android:background="@drawable/circlebutton"/>
+                                <Button
+                                    android:id = "@+id/copy"
+                                    android:layout_gravity="center|bottom"
+                                    android:layout_marginBottom="155dp"
+                                    android:layout_marginLeft="0dp"
+                                    android:layout_width="80dp"
+                                    android:layout_height="80dp"
+                                    android:text="Copy"
+                                    android:textColor="#FFFFFF"
+                                    android:textSize="13sp"
+                                    android:paddingTop="10dp"
+                                    android:paddingBottom="5dp"
+                                    android:drawablePadding="-10dp"
+                                    android:drawableTop="@drawable/copy"
+                                    android:onClick="copySelection"
+                                    android:background="@drawable/circlebutton"/>
+                                <Button
+                                    android:id = "@+id/cut"
+                                    android:layout_gravity="center|bottom"
+                                    android:layout_marginBottom="111.06dp"
+                                    android:layout_marginLeft="-106.06dp"
+                                    android:layout_width="80dp"
+                                    android:layout_height="80dp"
+                                    android:text="Cut"
+                                    android:textColor="#FFFFFF"
+                                    android:textSize="13sp"
+                                    android:paddingTop="10dp"
+                                    android:paddingBottom="5dp"
+                                    android:drawablePadding="-10dp"
+                                    android:drawableTop="@drawable/cut"
+                                    android:onClick="cutSelection"
+                                    android:background="@drawable/circlebutton"/>
+                                <Button
+                                    android:id = "@+id/erase"
+                                    android:layout_gravity="center|bottom"
+                                    android:layout_marginBottom="5dp"
+                                    android:layout_marginLeft="-150dp"
+                                    android:layout_width="80dp"
+                                    android:layout_height="80dp"
+                                    android:text="Erase"
+                                    android:textColor="#FFFFFF"
+                                    android:textSize="13sp"
+                                    android:paddingTop="10dp"
+                                    android:paddingBottom="5dp"
+                                    android:drawablePadding="-10dp"
+                                    android:drawableTop="@drawable/select"
+                                    android:onClick="eraseSelection"
+                                    android:background="@drawable/circlebutton"/>
+
+                            </FrameLayout>
+
+                            <!-- SELECT MENU 3 -->
+
+                            <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                             android:layout_width="match_parent"
+                             android:layout_height="match_parent"
+                             android:id = "@+id/bubble_menu_select_3"
+                             android:visibility="gone">
+
+                             <Button
+                                 android:id = "@+id/more_3"
+                                 android:layout_gravity="center|bottom"
+                                 android:layout_marginBottom="111.06dp"
+                                 android:layout_marginLeft="106.06dp"
+                                 android:layout_width="80dp"
+                                 android:layout_height="80dp"
+                                 android:text="More"
+                                 android:textColor="#FFFFFF"
+                                 android:textSize="13sp"
+                                 android:paddingTop="10dp"
+                                 android:paddingBottom="5dp"
+                                 android:drawablePadding="-10dp"
+                                 android:drawableTop="@drawable/more"
+                                 android:onClick="showSelectMenu1"
+                                 android:background="@drawable/circlebutton"/>
+
+
+                             <Button
+                                 android:id = "@+id/cancel"
+                                 android:layout_gravity="center|bottom"
+                                 android:layout_marginBottom="155dp"
+                                 android:layout_marginLeft="0dp"
+                                 android:layout_width="80dp"
+                                 android:layout_height="80dp"
+                                 android:text="Cancel"
+                                 android:textColor="#FFFFFF"
+                                 android:textSize="13sp"
+                                 android:paddingTop="10dp"
+                                 android:paddingBottom="5dp"
+                                 android:drawablePadding="-10dp"
+                                 android:drawableTop="@drawable/select"
+                                 android:onClick="cancelSelection"
+                                 android:background="@drawable/circlebutton"/>
+
+                             <Button
+                                 android:id = "@+id/export_select"
+                                 android:layout_gravity="center|bottom"
+                                 android:layout_marginBottom="111.06dp"
+                                 android:layout_marginLeft="-106.06dp"
+                                 android:layout_width="80dp"
+                                 android:layout_height="80dp"
+                                 android:text="Export"
+                                 android:textColor="#FFFFFF"
+                                 android:textSize="13sp"
+                                 android:paddingTop="10dp"
+                                 android:paddingBottom="5dp"
+                                 android:drawableTop="@drawable/export_select"
+                                 android:drawablePadding="-10dp"
+                                 android:onClick="exportSelection"
+                                 android:background="@drawable/circlebutton"/>
+
+
+                         </FrameLayout>
+
+                            <!-- ANCHOR MENU -->
+
+                            <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:id = "@+id/bubble_menu_anchors"
+                                android:visibility="gone">
+
+
+                                <Button
+                                    android:id = "@+id/new_anchor"
+                                    android:layout_gravity="center|bottom"
+                                    android:layout_marginBottom="111.06dp"
+                                    android:layout_marginLeft="106.06dp"
+                                    android:layout_width="80dp"
+                                    android:layout_height="80dp"
+                                    android:text="Add"
+                                    android:textColor="#FFFFFF"
+                                    android:textSize="13sp"
+                                    android:paddingTop="10dp"
+                                    android:paddingBottom="5dp"
+                                    android:drawableTop="@drawable/new_a"
+                                    android:drawablePadding="-10dp"
+                                    android:onClick="createNewAnchor"
+                                    android:background="@drawable/circlebutton"/>
+
+                                <Button
+                                    android:id = "@+id/go_to_anchor"
+                                    android:layout_gravity="center|bottom"
+                                    android:layout_marginBottom="111.06dp"
+                                    android:layout_marginLeft="-106.06dp"
+                                    android:layout_width="80dp"
+                                    android:layout_height="80dp"
+                                    android:text="Go To"
+                                    android:textColor="#FFFFFF"
+                                    android:textSize="13sp"
+                                    android:paddingTop="10dp"
+                                    android:paddingBottom="5dp"
+                                    android:drawablePadding="-10dp"
+                                    android:drawableTop="@drawable/go_to_a"
+                                    android:onClick="showAnchorGoToMenu"
+                                    android:background="@drawable/circlebutton"/>
+
+
+                            </FrameLayout>
+
+                            <!-- BOARD MENU -->
+
+                            <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:id = "@+id/bubble_menu_boards"
+                                android:visibility="gone">
+
+                                <Button
+                                    android:id = "@+id/delete_board"
+                                    android:layout_gravity="center|bottom"
+                                    android:layout_marginBottom="5dp"
+                                    android:layout_marginLeft="150dp"
+                                    android:layout_width="80dp"
+                                    android:layout_height="80dp"
+                                    android:text="Delete"
+                                    android:textColor="#FFFFFF"
+                                    android:textSize="13sp"
+                                    android:paddingTop="10dp"
+                                    android:paddingBottom="5dp"
+                                    android:drawableTop="@drawable/board"
+                                    android:drawablePadding="-10dp"
+                                    android:onClick="deleteBoard"
+                                    android:background="@drawable/circlebutton"/>
+                                <Button
+                                    android:id = "@+id/new_board"
+                                    android:layout_gravity="center|bottom"
+                                    android:layout_marginBottom="111.06dp"
+                                    android:layout_marginLeft="106.06dp"
+                                    android:layout_width="80dp"
+                                    android:layout_height="80dp"
+                                    android:text="New"
+                                    android:textColor="#FFFFFF"
+                                    android:textSize="13sp"
+                                    android:paddingTop="10dp"
+                                    android:paddingBottom="5dp"
+                                    android:drawableTop="@drawable/new_b"
+                                    android:drawablePadding="-10dp"
+                                    android:onClick="createBoard"
+                                    android:background="@drawable/circlebutton"/>
+                                <Button
+                                    android:id = "@+id/board_properties"
+                                    android:layout_gravity="center|bottom"
+                                    android:layout_marginBottom="155dp"
+                                    android:layout_marginLeft="0dp"
+                                    android:layout_width="80dp"
+                                    android:layout_height="80dp"
+                                    android:text="Edit"
+                                    android:textColor="#FFFFFF"
+                                    android:textSize="13sp"
+                                    android:paddingTop="10dp"
+                                    android:paddingBottom="5dp"
+                                    android:drawablePadding="-10dp"
+                                    android:drawableTop="@drawable/board"
+                                    android:onClick="changeBoardProp"
+                                    android:background="@drawable/circlebutton"/>
+                                <Button
+                                    android:id = "@+id/go_to_board"
+                                    android:layout_gravity="center|bottom"
+                                    android:layout_marginBottom="111.06dp"
+                                    android:layout_marginLeft="-106.06dp"
+                                    android:layout_width="80dp"
+                                    android:layout_height="80dp"
+                                    android:text="Go To"
+                                    android:textColor="#FFFFFF"
+                                    android:textSize="13sp"
+                                    android:paddingTop="10dp"
+                                    android:paddingBottom="5dp"
+                                    android:drawablePadding="-10dp"
+                                    android:drawableTop="@drawable/go_to_b"
+                                    android:onClick="showBoardGoToMenu"
+                                    android:background="@drawable/circlebutton"/>
+                                <Button
+                                    android:id = "@+id/export_board"
+                                    android:layout_gravity="center|bottom"
+                                    android:layout_marginBottom="5dp"
+                                    android:layout_marginLeft="-150dp"
+                                    android:layout_width="80dp"
+                                    android:layout_height="80dp"
+                                    android:text="Export"
+                                    android:textColor="#FFFFFF"
+                                    android:textSize="13sp"
+                                    android:paddingTop="10dp"
+                                    android:paddingBottom="5dp"
+                                    android:drawablePadding="-10dp"
+                                    android:drawableTop="@drawable/export_b"
+                                    android:onClick="exportBoard"
+                                    android:background="@drawable/circlebutton"/>
+
+                            </FrameLayout>
+                </FrameLayout>
+
+
+        </RelativeLayout>
+
+     </LinearLayout>
 
 
 

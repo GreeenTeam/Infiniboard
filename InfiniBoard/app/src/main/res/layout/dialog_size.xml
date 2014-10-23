@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="300dp"
+    android:layout_height="300dp"
+
+    >
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical" android:layout_width="match_parent"
+        android:layout_height="140dp"
+        android:gravity="center">
+            <ImageView
+                android:background ="@drawable/circlebutton"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:scaleType="center"
+                android:id="@+id/brush_size_graphic"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"/>
+    </LinearLayout >
+
+    <SeekBar
+        android:id="@+id/size_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="90"
+        android:progress="45"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_gravity="center"
+        />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+    <Button
+        android:layout_width="100dp"
+        android:layout_height="match_parent"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginBottom="20dp"
+        android:text = "Change Size"
+        android:textAlignment="center"
+        android:id ="@+id/change_size"
+        android:layout_gravity="center"/>
+        <Button
+            android:layout_width="75dp"
+            android:layout_height="match_parent"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginBottom="20dp"
+            android:text = "Reset"
+            android:textAlignment="center"
+            android:id ="@+id/reset_size_change"
+            android:layout_gravity="center"/>
+    <Button
+        android:layout_width="100dp"
+        android:layout_height="match_parent"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="20dp"
+        android:text = "Cancel"
+        android:textAlignment="center"
+        android:id ="@+id/cancel_size_change"
+        android:layout_gravity="center"/>
+    </LinearLayout>
+</LinearLayout>
