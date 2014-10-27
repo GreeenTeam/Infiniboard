@@ -28,6 +28,9 @@ public class Selector {
     private Bitmap selection;
     private int currentX;
     private int currentY;
+    private int height = 0;
+    private int width = 0;
+    private Bitmap replacement;
 
 //Constructor
     public Selector(int x, int y, int width, int height){
@@ -40,7 +43,8 @@ public class Selector {
         //set width/height?
     }
 
-    public Selector(){
+    public Selector(Board b){
+        currentBoard = b;
     }
 
 
@@ -70,42 +74,68 @@ public class Selector {
         currentY = y;
     }
 
-//Copy
-    public Bitmap copySelection(){
-        //Saves selection to 'clipboard' to be pasted later
-        //See: Bitmap.copy
-        return selection;
+    public int getHeight(){return height;}
+
+    public int getWidth(){return width;}
+
+
+
+
+//The below goes in the selector class
+
+    //We declare a Bitmap called clipboard
+//This will hold the copy of our selection
+    public Bitmap clipboard;
+    //Copy
+    public void copySelection(){
+        //The selection will be copied into clipboard
+        clipboard = selection.copy(selection.getConfig(), true);
     }
 
-//Cut
-    public Bitmap cutSelection(){
-        //First, Call copySelection()
-        //Overwrites area where selection is in currentBoard with board colour (white)
-        //See: Bitmap.eraseColor(int c)
-        //http://developer.android.com/reference/android/graphics/Canvas.html
-        return selection;
+    //Cut
+    public void cutSelection(){
+        //Calling copySelection in order to copy the selection into clipboard
+        copySelection();
+        //All the pixels in selection will be set to white
+        selection.eraseColor(0xFFffffff);
     }
 
-//Paste
+    //Paste
     public void pasteSelection(int x, int y){
-        //Pastes selection at a specified location
-        //Over-writes what is below
-        //See: Canvas.drawBitmap
-        //http://developer.android.com/reference/android/graphics/Canvas.html
-
+        //We declare a Canvas called newCanvas
+        Canvas newCanvas;
+        //Here we set newCanvas to the current canvas in our Board
+        newCanvas = currentBoard.getCanvas();
+        //We then draw the previously copied Bitmap to newCanvas
+        //The top left corner of the bitmap is located at x and y
+        //Paint is null
+        currentBoard.getCanvas().drawBitmap(clipboard, x, y, null);
+        //Finally we set the Canvas in Board equal to newCanvas
+        currentBoard.setCanvas(newCanvas);
+        //currentBoard.addSelectionToCanvas(x,y);
     }
+
+    //The above goes in the selector class
 //Scale
-    public Bitmap scaleSelection(int size){
+    public Bitmap scaleSelection(int scaleFactor) {
         //Scales selection to specified size
         //See: Bitmap.createScaledBitmap
+
+            selection = Bitmap.createScaledBitmap(selection, width/scaleFactor, height/scaleFactor, true);
+            width = width / scaleFactor;
+            height = height / scaleFactor;
+            currentBoard.addSelectionToCanvas(currentX - width/2, currentY - height/2);
+
         return selection;
     }
 
-/*//Move
-    public Bitmap moveSelection(int x, int y){
+//Move
+    public Bitmap moveSelection(){
         //Cuts selection, pastes it at specified co-ordinates
         //***Do we need to have this be a 'drag to' operation or just a call of cut/paste?***
-    }*/
+        currentBoard.inMoveMode = true;
+        return selection;
+    }
 
 //Rotate
     public Bitmap rotateSelection(int degree){
@@ -116,7 +146,7 @@ public class Selector {
 
 
 //Save Selection
-    public void saveSelection(String name, Context context){
+    public void saveSelection(String name,String description, Context context){
         //Please add  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
         //to manifest
         //Saves selection (as a bitmap) on the device
@@ -127,7 +157,7 @@ public class Selector {
         Canvas canvas = new Canvas(temp);
         canvas.drawBitmap(selection,0f,0f,null);
         canvas.setBitmap(temp);
-        MediaStore.Images.Media.insertImage(context.getContentResolver(), temp , "testImage", "testImage");
+        MediaStore.Images.Media.insertImage(context.getContentResolver(), temp , name, description);
 
     }
 
@@ -140,7 +170,7 @@ public class Selector {
                 for (int y = 0; y < selection.getHeight(); y++){
                     selection.getPixel(x, y);
                     //Checks to see if the current pixel is not white, if so, changes it to color
-                    if (selection.getPixel(x, y) != 0) {
+                    if (selection.getPixel(x, y) != 0 && selection.getPixel(x, y) != (Color.parseColor("#FFFFFF"))) {
                         selection.setPixel(x, y, color);
                     }
                 }
@@ -148,10 +178,27 @@ public class Selector {
 
     }
 
+    public void eraseSelection(){
+        //Changed the colour of all the paint in the selection
+        //with White
+
+        selection.eraseColor(0xFFffffff);
+
+    }
     public void setSelection(Bitmap b){
+
         selection = b;
+        height = b.getHeight();
+        width = b.getWidth();
+        replacement = Bitmap.createBitmap(b);
+        replacement.eraseColor(0xFFffffff);
     }
 
+    public Bitmap getReplacement() { return replacement; }
+
+    public boolean hasClipboard(){
+        return clipboard != null;
+    }
 
 
 }

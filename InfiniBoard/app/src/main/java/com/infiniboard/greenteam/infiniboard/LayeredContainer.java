@@ -14,9 +14,12 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -34,6 +37,7 @@ public class LayeredContainer extends LinearLayout {
 
     private View markerTray;
     private View board;
+    private View mainMenuMore1;
     private View mainBubbleMenu;
     private View selectBubbleMenu1;
     private View selectBubbleMenu2;
@@ -42,9 +46,6 @@ public class LayeredContainer extends LinearLayout {
     private View boardBubbleMenu;
     private BackButton backButton;
     private Board mainBoard;
-
-
-
 
     protected int traySize = 50;
 
@@ -84,6 +85,7 @@ public class LayeredContainer extends LinearLayout {
         markerTray.setVisibility(View.GONE);
         mainBoard =  (Board) findViewById(R.id.board);
         mainBubbleMenu = this.findViewById(R.id.bubble_menu_main);
+        mainMenuMore1 = this.findViewById(R.id.bubble_menu_main_sub);
         selectBubbleMenu1 = this.findViewById(R.id.bubble_menu_select_1);
         selectBubbleMenu2 = this.findViewById(R.id.bubble_menu_select_2);
         selectBubbleMenu3 = this.findViewById(R.id.bubble_menu_select_3);
@@ -119,7 +121,6 @@ public class LayeredContainer extends LinearLayout {
             markerTray.setVisibility(View.GONE);
             System.out.println("Menu Closed");
         }
-
         //redraw on the screen
         this.invalidate();
     }
@@ -148,9 +149,6 @@ public class LayeredContainer extends LinearLayout {
         this.toggleMenu();
     }
 
-
-
-
     private void calculateChildDimensions() {
         board.getLayoutParams().height = this.getHeight();
         board.getLayoutParams().width = this.getWidth();
@@ -159,8 +157,6 @@ public class LayeredContainer extends LinearLayout {
         markerTray.getLayoutParams().height = traySize;
     }
 
-
-
     public void clearMenus(){
         mainBubbleMenu.setVisibility(View.GONE);
         selectBubbleMenu1.setVisibility(View.GONE);
@@ -168,155 +164,174 @@ public class LayeredContainer extends LinearLayout {
         selectBubbleMenu3.setVisibility(View.GONE);
         anchorBubbleMenu.setVisibility(View.GONE);
         boardBubbleMenu.setVisibility(View.GONE);
+        mainMenuMore1.setVisibility(View.GONE);
         backButton.clearPastMenus();
         backButton.setVisibility(View.GONE);
         backButton.setEnabled(false);
         backButton.setAlpha((float) .50);
     }
 
-
-
     public void setSelectMode (){
         mainBoard.inSelector = true;
         mainBubbleMenu.setVisibility(View.GONE);
+        clearMenus();
     }
 
 
     // The following are the implementations of all the onClick Methods for the buttons in the Radial Menu
+    public void showMainMenu(View v){
+        mainMenuMore1.setVisibility(View.GONE);
+        backButton.addMenu(mainMenuMore1.getId());
+        mainBubbleMenu.setVisibility(View.VISIBLE);
+    }
 
+    public void showMainMenuMore1(View v){
+        mainBubbleMenu.setVisibility(View.GONE);
+        backButton.addMenu(mainBubbleMenu.getId());
+        mainMenuMore1.setVisibility(View.VISIBLE);
+    }
 
     public void showBoardMenu(View v){
-        mainBubbleMenu.setVisibility(View.GONE);
+        mainMenuMore1.setVisibility(View.GONE);
+        backButton.addMenu(mainMenuMore1.getId());
         boardBubbleMenu.setVisibility(View.VISIBLE);
-
     }
     public void showAnchorMenu(View v){
-        mainBubbleMenu.setVisibility(View.GONE);
+        mainMenuMore1.setVisibility(View.GONE);
+        backButton.addMenu(mainMenuMore1.getId());
         anchorBubbleMenu.setVisibility(View.VISIBLE);
-
     }
-    public void showSelectMenu1(View v){
 
-        mainBubbleMenu.setVisibility(View.GONE);
+
+    public void showSelectMenu1(View v){
         selectBubbleMenu3.setVisibility(View.GONE);
+        backButton.addMenu(selectBubbleMenu3.getId());
         mainBoard.inSelector = true;
         selectBubbleMenu1.setVisibility(View.VISIBLE);
     }
+
     public void showSelectMenu2(View v){
-        mainBubbleMenu.setVisibility(View.GONE);
         selectBubbleMenu1.setVisibility(View.GONE);
+        backButton.addMenu(selectBubbleMenu1.getId());
         mainBoard.inSelector = true;
         selectBubbleMenu2.setVisibility(View.VISIBLE);
     }
 
     public void showSelectMenu3(View v){
-        mainBubbleMenu.setVisibility(View.GONE);
         selectBubbleMenu2.setVisibility(View.GONE);
+        backButton.addMenu(selectBubbleMenu2.getId());
         mainBoard.inSelector = true;;
         selectBubbleMenu3.setVisibility(View.VISIBLE);
     }
     public void showColorMenu(View v) {
-        mainBubbleMenu.setVisibility(View.GONE);
+        clearMenus();
         System.out.println("SHOW COLOR MENU");
-
-
         colorDialog();
     }
     public void showSizeMenu(View v){
-        mainBubbleMenu.setVisibility(View.GONE);
+        clearMenus();
         System.out.println("SHOW SIZE MENU");
         sizeDialog();
     }
     public void moveSelection(View v){
-        selectBubbleMenu1.setVisibility(View.GONE);
-        mainBoard.addSelectionToCanvas(this.getWidth()/2,this.getHeight()/2);
+        clearMenus();
         System.out.println("MOVE SELECTION");
-
+        mainBoard.selector.moveSelection();
         mainBoard.inSelector = false;
-
     }
     public void scaleSelection(View v){
-        selectBubbleMenu1.setVisibility(View.GONE);
+        clearMenus();
         System.out.println("SCALE SELECTION");
-        mainBoard.inSelector = false;
+        //mainBoard.selector.scaleSelection(2);
+        scaleDialog();
     }
     public void rotateSelection(View v){
-        selectBubbleMenu1.setVisibility(View.GONE);
+        clearMenus();
         System.out.println("ROTATE SELECTION");
         mainBoard.inSelector = false;
     }
     public void colorizeSelection(View v){
+        clearMenus();
         colorizeDialog();
-        selectBubbleMenu1.setVisibility(View.GONE);
         System.out.println("SHOW COLOR MENU THE COLORIZE SELECTION");
         mainBoard.inSelector = false;
     }
     public void pasteSelection(View v){
-        selectBubbleMenu2.setVisibility(View.GONE);
+        clearMenus();
+
         System.out.println("PASTE SELECTION");
+        mainBoard.inPasteMode = true;
         mainBoard.inSelector = false;
     }
     public void copySelection(View v){
-        selectBubbleMenu2.setVisibility(View.GONE);
+        clearMenus();
+        mainBoard.selector.copySelection();
         System.out.println("COPY SELECTION");
         mainBoard.inSelector = false;
     }
     public void cutSelection(View v){
-        selectBubbleMenu2.setVisibility(View.GONE);
+        clearMenus();
+        mainBoard.selector.cutSelection();
+        mainBoard.addSelectionToCanvas(mainBoard.selector.getCurrentX(),mainBoard.selector.getCurrentY());
+        invalidate();
         System.out.println("CUT SELECTION");
         mainBoard.inSelector = false;
     }
     public void eraseSelection(View v){
-        selectBubbleMenu2.setVisibility(View.GONE);
+        // DONE - BRANDON CARUSO  WE MIGHT WHAT TO RETHINK RIGHT NOW ITS LIKE COLORIZING ALL TO WHITE
+        clearMenus();
+        mainBoard.selector.eraseSelection();
+        mainBoard.addSelectionToCanvas(mainBoard.selector.getCurrentX(),mainBoard.selector.getCurrentY());
+        invalidate();
         System.out.println("ERASE SELECTION");
         mainBoard.inSelector = false;
     }
     public void exportSelection(View v){
-        selectBubbleMenu3.setVisibility(View.GONE);
-        mainBoard.selector.saveSelection(" ",getContext());
+        clearMenus();
+        selectionToImageDialog();
         System.out.println("EXPORT SELECTION");
         mainBoard.inSelector = false;
     }
     public void cancelSelection(View v){
-        selectBubbleMenu3.setVisibility(View.GONE);
+        clearMenus();
         System.out.println("CANCEL SELECTION");
         mainBoard.inSelector = false;
     }
     public void createNewAnchor(View v){
-        anchorBubbleMenu.setVisibility(View.GONE);
+        clearMenus();
         System.out.println("CREATE NEW ANCHOR");
-
     }
     public void showAnchorGoToMenu(View v){
-        anchorBubbleMenu.setVisibility(View.GONE);
+        clearMenus();
+        viewAnchorsDialog();
         System.out.println("SHOW ANCHOR GO TO");
-
     }
     public void showBoardGoToMenu(View v){
         // THIS MIGHT BE MOVED UP
-        boardBubbleMenu.setVisibility(View.GONE);
+        clearMenus();
+        viewBoardsDialog();
         System.out.println("SHOW BOARD GO TO");
-
     }
     public void createBoard(View v){
         // THIS MIGHT BE MOVED UP
-        boardBubbleMenu.setVisibility(View.GONE);
+        clearMenus();
         System.out.println("CREATE BOARD");
     }
     public void changeBoardProp(View v){
         // THIS MIGHT BE MOVED UP
-        boardBubbleMenu.setVisibility(View.GONE);
+        clearMenus();
         System.out.println("CHANGE BOARD PROPERTIES");
 
     }
     public void exportBoard(View v){
         // THIS MIGHT BE MOVED UP
-        boardBubbleMenu.setVisibility(View.GONE);
+        clearMenus();
+        boardToImageDialog();
         System.out.println("CHANGE BOARD PROPERTIES");
     }
     public void deleteBoard(View v){
         // THIS MIGHT BE MOVED UP
-        boardBubbleMenu.setVisibility(View.GONE);
+        clearMenus();
         System.out.println("CHANGE BOARD PROPERTIES");
     }
 
@@ -332,8 +347,8 @@ public class LayeredContainer extends LinearLayout {
         final Board mainBoard = (Board) findViewById(R.id.board);
         final ImageView brushSizeGraphic = (ImageView) dialog.findViewById(R.id.brush_size_graphic);
         final SeekBar sizeBar = (SeekBar) dialog.findViewById(R.id.size_bar);
-        sizeBar.setProgress(mainBoard.currentMarker.strokeWidth - 10);
-        brushSizeGraphic.getLayoutParams().height = brushSizeGraphic.getLayoutParams().width = mainBoard.currentMarker.strokeWidth;
+        sizeBar.setProgress(mainBoard.currentMarker.getStrokeWidth() - 10);
+        brushSizeGraphic.getLayoutParams().height = brushSizeGraphic.getLayoutParams().width = mainBoard.currentMarker.getStrokeWidth();
         dialog.show();
 
         sizeBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -353,6 +368,7 @@ public class LayeredContainer extends LinearLayout {
 
             }
         } );
+
         Button declineButton = (Button) dialog.findViewById(R.id.cancel_size_change);
         // if decline button is clicked, close the custom dialog
         declineButton.setOnClickListener(new OnClickListener() {
@@ -368,7 +384,7 @@ public class LayeredContainer extends LinearLayout {
         resetButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                sizeBar.setProgress(0);
+                sizeBar.setProgress(mainBoard.currentMarker.getDefaultSize()-10);
             }
         });
 
@@ -380,6 +396,41 @@ public class LayeredContainer extends LinearLayout {
                 mainBoard.changeMarkerWidth( sizeBar.getProgress() + 10 );
                 System.out.println("Change Brush Size to: "+ ( sizeBar.getProgress() + 10 )+" px");
                 // Close dialog
+                dialog.dismiss();
+            }
+        });
+    }
+
+    public void scaleDialog(){
+
+        // Create custom dialog object
+        final Dialog dialog = new Dialog(getContext());
+
+
+        dialog.setContentView(R.layout.dialog_scale);
+        dialog.setTitle("Scale Current Selection");
+
+        final Board mainBoard = (Board) findViewById(R.id.board);
+
+        dialog.show();
+
+        Button declineButton = (Button) dialog.findViewById(R.id.cancel_scale_change);
+        // if decline button is clicked, close the custom dialog
+        declineButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Close dialog
+                dialog.dismiss();
+            }
+        });
+
+
+
+        Button changeScale = (Button) dialog.findViewById(R.id.change_scale);
+        // if decline button is clicked, close the custom dialog
+        changeScale.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 dialog.dismiss();
             }
         });
@@ -408,6 +459,15 @@ public class LayeredContainer extends LinearLayout {
             public void onClick(View v) {
                 // Close dialog
                 dialog.dismiss();
+            }
+        });
+
+        Button resetButton = (Button) dialog.findViewById(R.id.reset_color_change);
+
+        resetButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                colorPicker.setColor(mainBoard.currentMarker.getDefaultColor());
             }
         });
 
@@ -468,6 +528,74 @@ public class LayeredContainer extends LinearLayout {
         });
     }
 
+    public void viewBoardsDialog(){
+
+        // Create custom dialog object
+        final Dialog dialog = new Dialog(getContext());
+        // Include dialog_size.xml file
+
+        dialog.setContentView(R.layout.dialog_view_boards);
+        dialog.setTitle("Go To a Different Board");
+
+
+
+        dialog.show();
+        Button declineButton = (Button) dialog.findViewById(R.id.cancel_goto_board);
+        // if decline button is clicked, close the custom dialog
+        declineButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Close dialog
+                dialog.dismiss();
+            }
+        });
+
+        Button gotoBoard = (Button) dialog.findViewById(R.id.goto_board);
+        gotoBoard.setEnabled(false);
+        // if decline button is clicked, close the custom dialog
+        gotoBoard.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+    }
+
+    public void viewAnchorsDialog(){
+
+        // Create custom dialog object
+        final Dialog dialog = new Dialog(getContext());
+        // Include dialog_size.xml file
+
+        dialog.setContentView(R.layout.dialog_view_anchors);
+        dialog.setTitle("Go To a Different Anchor");
+
+
+
+        dialog.show();
+        Button declineButton = (Button) dialog.findViewById(R.id.cancel_goto_anchor);
+        // if decline button is clicked, close the custom dialog
+        declineButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Close dialog
+                dialog.dismiss();
+            }
+        });
+
+        Button gotoAnchor = (Button) dialog.findViewById(R.id.goto_anchor);
+        gotoAnchor.setEnabled(false);
+        // if decline button is clicked, close the custom dialog
+        gotoAnchor.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+    }
+
+
+
     public void changeButtonColor(int id){
         final Board mainBoard = (Board) findViewById(R.id.board);
         Button currentButton;
@@ -504,8 +632,93 @@ public class LayeredContainer extends LinearLayout {
 
     }
 
+    public void boardToImageDialog(){
+
+        // Create custom dialog object
+        final Dialog dialog = new Dialog(getContext());
+        // Include dialog_size.xml file
+
+        dialog.setContentView(R.layout.dialog_board_image);
+        dialog.setTitle("Save Entire Board as Image:");
+
+
+
+        dialog.show();
+        Button declineButton = (Button) dialog.findViewById(R.id.cancel_export);
+        // if decline button is clicked, close the custom dialog
+        declineButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Close dialog
+                dialog.dismiss();
+            }
+        });
+
+        Button export = (Button) dialog.findViewById(R.id.export);
+       final EditText name = (EditText) dialog.findViewById(R.id.image_name);
+       final EditText description = (EditText) dialog.findViewById(R.id.image_description);
+        // if decline button is clicked, close the custom dialog
+        export.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mainBoard.saveImage(name.getText().toString(),description.getText().toString(),getContext());
+                dialog.dismiss();
+            }
+        });
+    }
+    public void selectionToImageDialog(){
+
+        // Create custom dialog object
+        final Dialog dialog = new Dialog(getContext());
+        // Include dialog_size.xml file
+
+        dialog.setContentView(R.layout.dialog_select_image);
+        dialog.setTitle("Save Selection as Image:");
+
+
+
+        dialog.show();
+        Button declineButton = (Button) dialog.findViewById(R.id.cancel_export);
+        // if decline button is clicked, close the custom dialog
+        declineButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Close dialog
+                dialog.dismiss();
+            }
+        });
+
+        Button export = (Button) dialog.findViewById(R.id.export);
+        final EditText name = (EditText) dialog.findViewById(R.id.selection_name);
+        final EditText description = (EditText) dialog.findViewById(R.id.selection_description);
+        // if decline button is clicked, close the custom dialog
+        export.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mainBoard.selector.saveSelection(name.getText().toString(),description.getText().toString(),getContext());
+                dialog.dismiss();
+            }
+        });
+    }
+
+
     public void goToPreviousMenu(View v){
-        System.out.println("BACK IT UP");
+        mainBubbleMenu.setVisibility(View.GONE);
+        selectBubbleMenu1.setVisibility(View.GONE);
+        selectBubbleMenu2.setVisibility(View.GONE);
+        selectBubbleMenu3.setVisibility(View.GONE);
+        anchorBubbleMenu.setVisibility(View.GONE);
+        boardBubbleMenu.setVisibility(View.GONE);
+        mainMenuMore1.setVisibility(View.GONE);
+        if(backButton.getSize()-1 <= 0) {
+            backButton.setAlpha(.5f);
+            backButton.setEnabled(false);
+            View menu =  findViewById(backButton.getLastMenu());
+            menu.setVisibility(View.VISIBLE);
+        }else {
+            View menu = findViewById(backButton.getLastMenu());
+            menu.setVisibility(View.VISIBLE);
+        }
     }
 
 }

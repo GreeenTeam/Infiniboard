@@ -32,6 +32,7 @@ public class InfiniBoard extends Activity {
                 root.clearMenus();
 
                 Button colorChange = (Button) findViewById(R.id.color);
+                Button mainPaste = (Button) findViewById(R.id.main_paste);
 
                 final Board mainBoard = (Board) findViewById(R.id.board);
 
@@ -41,6 +42,14 @@ public class InfiniBoard extends Activity {
                 }else {
                     colorChange.setAlpha((float) 1.0);
                     colorChange.setEnabled(true);
+                }
+
+                if (!mainBoard.selector.hasClipboard()) {
+                    mainPaste.setAlpha((float) .5);
+                    mainPaste.setEnabled(false);
+                }else {
+                    mainPaste.setAlpha((float) 1.0);
+                    mainPaste.setEnabled(true);
                 }
 
                 BackButton backButton = (BackButton) findViewById(R.id.back_button);
@@ -108,7 +117,12 @@ public class InfiniBoard extends Activity {
     public void changeMarkerTo(View v){
         root.changeMarkerTo(v);
     }
-
+    public void showMainMenu(View v){
+        root.showMainMenu(v);
+    }
+    public void showMainMenuMore1(View v){
+        root.showMainMenuMore1(v);
+    }
     public void showBoardMenu(View v){
         root.showBoardMenu(v);
     }
@@ -156,7 +170,6 @@ public class InfiniBoard extends Activity {
     public void exportSelection(View v){
         root.exportSelection(v);
     }
-
     public void cancelSelection(View v){
         root.cancelSelection(v);
     }
@@ -181,7 +194,6 @@ public class InfiniBoard extends Activity {
     public void deleteBoard(View v){
         root.deleteBoard(v);
     }
-
     public void goToPreviousMenu(View v){
         root.goToPreviousMenu(v);
     }

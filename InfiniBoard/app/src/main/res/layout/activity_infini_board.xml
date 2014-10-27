@@ -163,6 +163,7 @@
                                 android:layout_gravity="center|bottom"
                                 android:background="@drawable/circlebutton"
                                 android:text="Back"
+                                android:textAlignment="center"
                                 android:textColor="#FFFFFF"
                                 android:textSize="13sp"
                                 android:alpha = ".5"
@@ -178,39 +179,37 @@
                                 android:id = "@+id/bubble_menu_main"
                                 android:visibility="gone">
 
-
-
                                 <Button
-                                    android:id = "@+id/boards"
+                                    android:id = "@+id/main_menu_more"
                                     android:layout_gravity="center|bottom"
                                     android:layout_marginBottom="5dp"
                                     android:layout_marginLeft="150dp"
                                     android:layout_width="80dp"
                                     android:layout_height="80dp"
-                                    android:text="Boards"
+                                    android:text="More"
                                     android:textColor="#FFFFFF"
                                     android:textSize="13sp"
                                     android:paddingTop="10dp"
                                     android:paddingBottom="5dp"
-                                    android:drawableTop="@drawable/board"
+                                    android:drawableTop="@drawable/more"
                                     android:drawablePadding="-10dp"
-                                    android:onClick="showBoardMenu"
+                                    android:onClick="showMainMenuMore1"
                                     android:background="@drawable/circlebutton"/>
                                 <Button
-                                    android:id = "@+id/anchors"
+                                    android:id = "@+id/main_paste"
                                     android:layout_gravity="center|bottom"
                                     android:layout_marginBottom="111.06dp"
                                     android:layout_marginLeft="106.06dp"
                                     android:layout_width="80dp"
                                     android:layout_height="80dp"
-                                    android:text="Anchors"
+                                    android:text="Paste"
                                     android:textColor="#FFFFFF"
                                     android:textSize="13sp"
                                     android:paddingTop="10dp"
                                     android:paddingBottom="5dp"
-                                    android:drawableTop="@drawable/anchor"
+                                    android:drawableTop="@drawable/paste"
                                     android:drawablePadding="-10dp"
-                                    android:onClick="showAnchorMenu"
+                                    android:onClick="pasteSelection"
                                     android:background="@drawable/circlebutton"/>
                                 <Button
                                     android:id = "@+id/select"
@@ -263,6 +262,67 @@
                                     android:background="@drawable/circlebutton"/>
 
                             </FrameLayout>
+
+                    <!-- MAIN MENU SUB -->
+
+                    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:id = "@+id/bubble_menu_main_sub"
+                        android:visibility="gone">
+
+
+
+                        <Button
+                            android:id = "@+id/main_menu_more_1"
+                            android:layout_gravity="center|bottom"
+                            android:layout_marginBottom="111.06dp"
+                            android:layout_marginLeft="106.06dp"
+                            android:layout_width="80dp"
+                            android:layout_height="80dp"
+                            android:text="More"
+                            android:textColor="#FFFFFF"
+                            android:textSize="13sp"
+                            android:paddingTop="10dp"
+                            android:paddingBottom="5dp"
+                            android:drawableTop="@drawable/more"
+                            android:drawablePadding="-10dp"
+                            android:onClick="showMainMenu"
+                            android:background="@drawable/circlebutton"/>
+                        <Button
+                            android:id = "@+id/anchors"
+                            android:layout_gravity="center|bottom"
+                            android:layout_marginBottom="155dp"
+                            android:layout_marginLeft="0dp"
+                            android:layout_width="80dp"
+                            android:layout_height="80dp"
+                            android:text="Anchors"
+                            android:textColor="#FFFFFF"
+                            android:textSize="13sp"
+                            android:paddingTop="10dp"
+                            android:paddingBottom="5dp"
+                            android:drawableTop="@drawable/anchor"
+                            android:drawablePadding="-10dp"
+                            android:onClick="showAnchorMenu"
+                            android:background="@drawable/circlebutton"/>
+                        <Button
+                            android:id = "@+id/boards"
+                            android:layout_gravity="center|bottom"
+                            android:layout_marginBottom="111.06dp"
+                            android:layout_marginLeft="-106.06dp"
+                            android:layout_width="80dp"
+                            android:layout_height="80dp"
+                            android:text="Boards"
+                            android:textColor="#FFFFFF"
+                            android:textSize="13sp"
+                            android:paddingTop="10dp"
+                            android:paddingBottom="5dp"
+                            android:drawableTop="@drawable/board"
+                            android:drawablePadding="-10dp"
+                            android:onClick="showBoardMenu"
+                            android:background="@drawable/circlebutton"/>
+
+                    </FrameLayout>
 
                             <!-- SELECT MENU 1 -->
 
@@ -319,7 +379,9 @@
                                     android:drawablePadding="-10dp"
                                     android:drawableTop="@drawable/scale"
                                     android:onClick="scaleSelection"
-                                    android:background="@drawable/circlebutton"/>
+                                    android:background="@drawable/circlebutton"
+                                    android:enabled = "false"
+                                    android:alpha =".5"/>
                                 <Button
                                     android:id = "@+id/rotate"
                                     android:layout_gravity="center|bottom"
@@ -335,7 +397,9 @@
                                     android:drawablePadding="-10dp"
                                     android:drawableTop="@drawable/rotate"
                                     android:onClick="rotateSelection"
-                                    android:background="@drawable/circlebutton"/>
+                                    android:background="@drawable/circlebutton"
+                                    android:enabled = "false"
+                                    android:alpha =".5"/>
                                 <Button
                                     android:id = "@+id/colorize"
                                     android:layout_gravity="center|bottom"
@@ -379,22 +443,21 @@
                                     android:drawablePadding="-10dp"
                                     android:onClick="showSelectMenu3"
                                     android:background="@drawable/circlebutton"/>
-
                                 <Button
-                                    android:id = "@+id/paste"
+                                    android:id = "@+id/cancel"
                                     android:layout_gravity="center|bottom"
                                     android:layout_marginBottom="111.06dp"
                                     android:layout_marginLeft="106.06dp"
                                     android:layout_width="80dp"
                                     android:layout_height="80dp"
-                                    android:text="Paste"
+                                    android:text="Cancel"
                                     android:textColor="#FFFFFF"
                                     android:textSize="13sp"
                                     android:paddingTop="10dp"
                                     android:paddingBottom="5dp"
-                                    android:drawableTop="@drawable/paste"
                                     android:drawablePadding="-10dp"
-                                    android:onClick="pasteSelection"
+                                    android:drawableTop="@drawable/cancel_select"
+                                    android:onClick="cancelSelection"
                                     android:background="@drawable/circlebutton"/>
                                 <Button
                                     android:id = "@+id/copy"
@@ -441,7 +504,7 @@
                                     android:paddingTop="10dp"
                                     android:paddingBottom="5dp"
                                     android:drawablePadding="-10dp"
-                                    android:drawableTop="@drawable/select"
+                                    android:drawableTop="@drawable/erase_select"
                                     android:onClick="eraseSelection"
                                     android:background="@drawable/circlebutton"/>
 
@@ -472,23 +535,6 @@
                                  android:onClick="showSelectMenu1"
                                  android:background="@drawable/circlebutton"/>
 
-
-                             <Button
-                                 android:id = "@+id/cancel"
-                                 android:layout_gravity="center|bottom"
-                                 android:layout_marginBottom="155dp"
-                                 android:layout_marginLeft="0dp"
-                                 android:layout_width="80dp"
-                                 android:layout_height="80dp"
-                                 android:text="Cancel"
-                                 android:textColor="#FFFFFF"
-                                 android:textSize="13sp"
-                                 android:paddingTop="10dp"
-                                 android:paddingBottom="5dp"
-                                 android:drawablePadding="-10dp"
-                                 android:drawableTop="@drawable/select"
-                                 android:onClick="cancelSelection"
-                                 android:background="@drawable/circlebutton"/>
 
                              <Button
                                  android:id = "@+id/export_select"
@@ -534,7 +580,9 @@
                                     android:drawableTop="@drawable/new_a"
                                     android:drawablePadding="-10dp"
                                     android:onClick="createNewAnchor"
-                                    android:background="@drawable/circlebutton"/>
+                                    android:background="@drawable/circlebutton"
+                                    android:enabled = "false"
+                                    android:alpha =".5"/>
 
                                 <Button
                                     android:id = "@+id/go_to_anchor"
@@ -576,10 +624,12 @@
                                     android:textSize="13sp"
                                     android:paddingTop="10dp"
                                     android:paddingBottom="5dp"
-                                    android:drawableTop="@drawable/board"
+                                    android:drawableTop="@drawable/delete_board"
                                     android:drawablePadding="-10dp"
                                     android:onClick="deleteBoard"
-                                    android:background="@drawable/circlebutton"/>
+                                    android:background="@drawable/circlebutton"
+                                    android:enabled = "false"
+                                    android:alpha =".5"/>
                                 <Button
                                     android:id = "@+id/new_board"
                                     android:layout_gravity="center|bottom"
@@ -595,7 +645,9 @@
                                     android:drawableTop="@drawable/new_b"
                                     android:drawablePadding="-10dp"
                                     android:onClick="createBoard"
-                                    android:background="@drawable/circlebutton"/>
+                                    android:background="@drawable/circlebutton"
+                                    android:enabled = "false"
+                                    android:alpha =".5"/>
                                 <Button
                                     android:id = "@+id/board_properties"
                                     android:layout_gravity="center|bottom"
@@ -609,9 +661,11 @@
                                     android:paddingTop="10dp"
                                     android:paddingBottom="5dp"
                                     android:drawablePadding="-10dp"
-                                    android:drawableTop="@drawable/board"
+                                    android:drawableTop="@drawable/edit_board"
                                     android:onClick="changeBoardProp"
-                                    android:background="@drawable/circlebutton"/>
+                                    android:background="@drawable/circlebutton"
+                                    android:enabled = "false"
+                                    android:alpha =".5"/>
                                 <Button
                                     android:id = "@+id/go_to_board"
                                     android:layout_gravity="center|bottom"
@@ -627,7 +681,8 @@
                                     android:drawablePadding="-10dp"
                                     android:drawableTop="@drawable/go_to_b"
                                     android:onClick="showBoardGoToMenu"
-                                    android:background="@drawable/circlebutton"/>
+                                    android:background="@drawable/circlebutton"
+                                    />
                                 <Button
                                     android:id = "@+id/export_board"
                                     android:layout_gravity="center|bottom"
