@@ -4,9 +4,11 @@ import android.widget.Button;
  * Created by Justin and Nick on 10/10/14.
  */
 public class Marker {
-    int color;
-    int strokeWidth;
-    int id; // ADDED BY BRANDON FOR COLOR CHANGING OF BUTTONS
+    private int color;
+    private int defaultSize;
+    private int defaultColor;
+    private int strokeWidth;
+    private int id; // ADDED BY BRANDON FOR COLOR CHANGING OF BUTTONS
 
 
     public Marker(){
@@ -18,8 +20,15 @@ public class Marker {
         color = startColor;
     }
     public Marker(int startColor,int i){
-        strokeWidth = 10;
-        color = startColor;
+        strokeWidth = defaultSize = 10;
+
+        color = defaultColor = startColor;
+        id = i;
+    }
+
+    public Marker(int startColor,int i,int size){
+        strokeWidth = defaultSize = size;
+        color = defaultColor = startColor;
         id = i;
     }
 
@@ -33,6 +42,13 @@ public class Marker {
 
     public int getStrokeWidth(){
         return strokeWidth;
+    }
+
+    public int getDefaultSize(){
+        return defaultSize;
+    }
+    public int getDefaultColor(){
+        return defaultColor;
     }
 
     public int getColor(){

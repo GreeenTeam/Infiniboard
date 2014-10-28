@@ -4,15 +4,29 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.larswerkman.holocolorpicker.ColorPicker
-        android:id="@+id/picker"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
 
-    <com.larswerkman.holocolorpicker.SVBar
-        android:id="@+id/svbar"
+    <TextView
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:text="Name Your Image:"
+         />
+
+    <EditText
+        android:layout_width="384dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:id="@+id/image_name" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Describe Your Image:"
+         />
+
+    <EditText
+        android:layout_width="384dp"
+        android:layout_height="141dp"
+        android:id="@+id/image_description" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -21,29 +35,19 @@
         android:gravity="center">
 
         <Button
-            android:layout_width="wrap_content"
+            android:layout_width="100dp"
             android:layout_height="match_parent"
             android:layout_marginTop="20dp"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="5dp"
             android:layout_marginBottom="20dp"
-            android:text = "Change Color"
+            android:text = "Export"
             android:textAlignment="center"
-            android:id ="@+id/change_color"
+            android:id ="@+id/export"
             android:layout_gravity="center"/>
+
         <Button
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginTop="20dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="5dp"
-            android:layout_marginBottom="20dp"
-            android:text = "Default"
-            android:textAlignment="center"
-            android:id ="@+id/reset_color_change"
-            android:layout_gravity="center"/>
-        <Button
-            android:layout_width="wrap_content"
+            android:layout_width="100dp"
             android:layout_height="match_parent"
             android:layout_marginTop="20dp"
             android:layout_marginLeft="5dp"
@@ -51,7 +55,7 @@
             android:layout_marginBottom="20dp"
             android:text = "Cancel"
             android:textAlignment="center"
-            android:id ="@+id/cancel_color_change"
+            android:id ="@+id/cancel_export"
             android:layout_gravity="center"/>
     </LinearLayout>
 

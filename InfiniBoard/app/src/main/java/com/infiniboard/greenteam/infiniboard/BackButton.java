@@ -27,19 +27,25 @@ public class BackButton extends Button {
     }
 
     public void addMenu(int i){
+        this.setAlpha(1f);
+        this.setEnabled(true);
         s.push(i);
     }
 
-    public int getLastMenu(int i){
-        return s.pop();
+    public int getLastMenu(){
+            return s.pop();
     }
 
     public void clearPastMenus(){
+        this.setAlpha(.5f);
+        this.setEnabled(false);
         s.clear();
     }
 
     public boolean hasAPast(){
         return s.empty();
     }
-
+    public int getSize(){
+        return s.size();
+    }
 }

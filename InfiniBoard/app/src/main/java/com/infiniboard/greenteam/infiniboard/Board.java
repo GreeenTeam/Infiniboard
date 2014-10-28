@@ -1,7 +1,10 @@
 package com.infiniboard.greenteam.infiniboard;
 
+import android.graphics.Color;
+import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.provider.MediaStore;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -27,7 +30,9 @@ public class Board extends View {
     boolean inSelector;
     float originX;
     float originY;
-    Selector selector = new Selector();
+    Selector selector = new Selector(this);
+    boolean inMoveMode = false;
+    boolean inPasteMode = false;
 
     public Board(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -36,8 +41,7 @@ public class Board extends View {
         tray[1] = new Marker(0xFF009150,1);
         tray[2] = new Marker(0xFF0070BB,2);
         tray[3] = new Marker(0xFFDA2C43,3);
-        tray[4] = new Marker(0xFFffffff,4);
-        tray[4].setStrokeWidth(45);
+        tray[4] = new Marker(0xFFffffff,4,45);
         currentMarker = tray[0];
         setupDrawing();
     }
@@ -81,38 +85,65 @@ public class Board extends View {
     //the screen this method is called
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        drawPaint.setColor(currentMarker.getColor());
-        drawPaint.setStrokeWidth(currentMarker.getStrokeWidth());
         //get the coordinates of the touch event.
         float eventX = event.getX();
         float eventY = event.getY();
         if(inSelector){
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
-
+                    drawPaint.setColor(0xFF000000);
+                    drawPaint.setStrokeWidth(5);
+                    drawPaint.setPathEffect(new DashPathEffect(new float[]{10, 20}, 0));
                     drawPath.moveTo(eventX, eventY);
                     originX = eventX;
                     originY = eventY;
                     break;
                 case MotionEvent.ACTION_MOVE:
-
                     drawPath.reset();
-                    drawPath.addRect(originX,originY,eventX,eventY, Path.Direction.CW);
+                    if((originX < eventX) && (originY < eventY)) {
+                        drawPath.addRect(originX, originY, eventX, eventY, Path.Direction.CW);
+                    }
                     break;
                 case MotionEvent.ACTION_UP:
 
                     drawPath.reset();
-                    selector.setSelection( Bitmap.createBitmap(canvasBitmap,(int) originX,(int) originY,(int) (eventX-originX) ,(int) (eventY-originY)));
-                    selector.setCurrentX((int)originX);
-                    selector.setCurrentY((int)originY);
+                    if((originX < eventX) && (originY < eventY)) {
+                        selector.setSelection(Bitmap.createBitmap(canvasBitmap, (int) originX, (int) originY, (int) (eventX - originX), (int) (eventY - originY)));
+                        selector.setCurrentX((int) originX);
+                        selector.setCurrentY((int) originY);
+                    }
+                    drawPaint.setPathEffect(null);
                     break;
                 default:
                     return false;
+            }
+        }else if (inMoveMode) {
+            switch (event.getAction()){
+                case MotionEvent.ACTION_DOWN:
+                    //place selection down
+                    addSelectionToCanvas(((int)eventX - (selector.getWidth()/2)), ((int)eventY - (selector.getHeight()/2)));
+                    break;
+                case MotionEvent.ACTION_UP:
+                    //end move mode
+                    inMoveMode = false;
+            }
+        }else if (inPasteMode) {
+            switch (event.getAction()){
+                case MotionEvent.ACTION_DOWN:
+                    //place selection down
+                    selector.pasteSelection(((int)eventX - (selector.clipboard.getWidth()/2)), ((int)eventY - (selector.clipboard.getHeight()/2)));
+                    break;
+                case MotionEvent.ACTION_UP:
+                    //end move mode
+                    inPasteMode = false;
             }
         }else{
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     //set a new starting point
+                    drawPaint.setColor(currentMarker.getColor());
+                    drawPaint.setStrokeWidth(currentMarker.getStrokeWidth());
+                    drawCanvas.drawPoint(eventX, eventY, drawPaint);
                     drawPath.moveTo(eventX, eventY);
                     break;
                 case MotionEvent.ACTION_MOVE:
@@ -134,9 +165,22 @@ public class Board extends View {
         invalidate();
         return true;
     }
+    //Put the below in the Board class
 
+    public Canvas getCanvas() {
+        return drawCanvas;
+    }
+
+    public void setCanvas(Canvas n) {
+        drawCanvas = n;
+    }
     //this will be called when the user selects a different marker
     public void changeMarker(int m){
+        if(m==4) {
+            drawPaint.setAntiAlias(false);
+        }else{
+            drawPaint.setAntiAlias(true);
+        }
         currentMarker = tray[m];
     }
 
@@ -149,7 +193,26 @@ public class Board extends View {
     }
 
     public void addSelectionToCanvas (int x, int y){
+        drawCanvas.drawBitmap(selector.getReplacement(), originX, originY, null);
         drawCanvas.drawBitmap(selector.getSelection(),x,y,null);
+        originX = x;
+        originY = y;
+        invalidate();
+    }
+
+    public void saveImage (String name,String description, Context context){
+        //Please add  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+        //to manifest
+        //Saves selection (as a bitmap) on the device
+        //Code Referenced: http://stackoverflow.com/questions/16861753/android-saving-bitmap-to-phone-storage
+
+        Bitmap temp = Bitmap.createBitmap(canvasBitmap.getWidth(),canvasBitmap.getHeight(),canvasBitmap.getConfig());
+        temp.eraseColor(Color.WHITE);
+        Canvas canvas = new Canvas(temp);
+        canvas.drawBitmap(canvasBitmap,0f,0f,null);
+        canvas.setBitmap(temp);
+        MediaStore.Images.Media.insertImage(context.getContentResolver(), temp , name, description);
+
     }
 
 }
