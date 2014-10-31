@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.content.ContentResolver;
@@ -115,17 +116,15 @@ public class Selector {
         //currentBoard.addSelectionToCanvas(x,y);
     }
 
-    //The above goes in the selector class
-//Scale
-    public Bitmap scaleSelection(int scaleFactor) {
+///Scale
+    public Bitmap scaleSelection(float scaleFactor) {
         //Scales selection to specified size
         //See: Bitmap.createScaledBitmap
 
-            selection = Bitmap.createScaledBitmap(selection, width/scaleFactor, height/scaleFactor, true);
-            width = width / scaleFactor;
-            height = height / scaleFactor;
-            currentBoard.addSelectionToCanvas(currentX - width/2, currentY - height/2);
-
+        selection = Bitmap.createScaledBitmap(selection, (int)(width*scaleFactor), (int)(height*scaleFactor), true);
+        currentBoard.addSelectionToCanvas((int)(currentX + (width-(width*scaleFactor))/2), (int)(currentY + (height-(height*scaleFactor))/2));
+        width = (int)(width*scaleFactor);
+        height = (int)(height*scaleFactor);
         return selection;
     }
 
@@ -138,9 +137,16 @@ public class Selector {
     }
 
 //Rotate
-    public Bitmap rotateSelection(int degree){
+    public Bitmap rotateSelection(float degree){
         //Rotates the selection by a specified degree
         //See: Bitmap.createBitmap (the one that uses a Matrix)
+        Matrix matrix = new Matrix();
+        matrix.postScale(width, height);
+        matrix.setRotate(degree);
+        selection = Bitmap.createBitmap(selection, 0, 0, width, height, matrix, true);
+        currentBoard.addSelectionToCanvas((currentX - (selection.getWidth()-(width))/2), (currentY - (selection.getHeight()-height)/2));
+        width = this.getWidth();
+        height = this.getHeight();
         return selection;
     }
 

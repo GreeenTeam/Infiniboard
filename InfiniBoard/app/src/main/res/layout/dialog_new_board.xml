@@ -8,25 +8,25 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Name Your Image:"
+        android:text="Name Your Board:"
          />
 
     <EditText
         android:layout_width="384dp"
         android:layout_height="wrap_content"
         android:layout_gravity="right"
-        android:id="@+id/image_name" />
+        android:id="@+id/board_name" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Describe Your Image:"
+        android:text="Describe Your Board:"
          />
 
     <EditText
         android:layout_width="384dp"
         android:layout_height="141dp"
-        android:id="@+id/image_description" />
+        android:id="@+id/board_description" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -41,22 +41,11 @@
             android:layout_marginLeft="10dp"
             android:layout_marginRight="5dp"
             android:layout_marginBottom="20dp"
-            android:text = "Export"
+            android:text = "Name My Board"
             android:textAlignment="center"
-            android:id ="@+id/export"
+            android:id ="@+id/name"
             android:layout_gravity="center"/>
 
-        <Button
-            android:layout_width="100dp"
-            android:layout_height="match_parent"
-            android:layout_marginTop="20dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginBottom="20dp"
-            android:text = "Cancel"
-            android:textAlignment="center"
-            android:id ="@+id/cancel_export"
-            android:layout_gravity="center"/>
     </LinearLayout>
 
 </LinearLayout>

@@ -242,12 +242,14 @@ public class LayeredContainer extends LinearLayout {
     public void scaleSelection(View v){
         clearMenus();
         System.out.println("SCALE SELECTION");
-        //mainBoard.selector.scaleSelection(2);
+
         scaleDialog();
+        mainBoard.inSelector = false;
     }
     public void rotateSelection(View v){
         clearMenus();
         System.out.println("ROTATE SELECTION");
+        rotateDialog();
         mainBoard.inSelector = false;
     }
     public void colorizeSelection(View v){
@@ -320,7 +322,9 @@ public class LayeredContainer extends LinearLayout {
     public void changeBoardProp(View v){
         // THIS MIGHT BE MOVED UP
         clearMenus();
+
         System.out.println("CHANGE BOARD PROPERTIES");
+        editBoardDialog();
 
     }
     public void exportBoard(View v){
@@ -401,6 +405,60 @@ public class LayeredContainer extends LinearLayout {
         });
     }
 
+    public void rotateDialog(){
+
+        // Create custom dialog object
+        final Dialog dialog = new Dialog(getContext());
+
+
+        dialog.setContentView(R.layout.dialog_rotate);
+        dialog.setTitle("Rotate Current Selection");
+
+        final Board mainBoard = (Board) findViewById(R.id.board);
+        final SeekBar rotateBar = (SeekBar) dialog.findViewById(R.id.degree_bar);
+        final TextView percent = (TextView) dialog.findViewById(R.id.degree_text);
+        dialog.show();
+
+        rotateBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                String degree = Integer.toString(rotateBar.getProgress() * 15);
+                percent.setText( degree + (char)0x00B0);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        } );
+        Button declineButton = (Button) dialog.findViewById(R.id.cancel_rotate_change);
+        // if decline button is clicked, close the custom dialog
+        declineButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Close dialog
+                dialog.dismiss();
+            }
+        });
+
+
+
+        Button changeRotate = (Button) dialog.findViewById(R.id.change_rotate);
+        // if decline button is clicked, close the custom dialog
+        changeRotate.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mainBoard.selector.rotateSelection(rotateBar.getProgress()*15f);
+                dialog.dismiss();
+            }
+        });
+    }
+
     public void scaleDialog(){
 
         // Create custom dialog object
@@ -411,9 +469,26 @@ public class LayeredContainer extends LinearLayout {
         dialog.setTitle("Scale Current Selection");
 
         final Board mainBoard = (Board) findViewById(R.id.board);
-
+        final SeekBar scaleBar = (SeekBar) dialog.findViewById(R.id.scale_bar);
+        final TextView percent = (TextView) dialog.findViewById(R.id.percent_text);
         dialog.show();
 
+        scaleBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                percent.setText((scaleBar.getProgress()+1)+"%");
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        } );
         Button declineButton = (Button) dialog.findViewById(R.id.cancel_scale_change);
         // if decline button is clicked, close the custom dialog
         declineButton.setOnClickListener(new OnClickListener() {
@@ -431,6 +506,7 @@ public class LayeredContainer extends LinearLayout {
         changeScale.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                mainBoard.selector.scaleSelection(((scaleBar.getProgress()+1)/100.00f));
                 dialog.dismiss();
             }
         });
@@ -641,8 +717,11 @@ public class LayeredContainer extends LinearLayout {
         dialog.setContentView(R.layout.dialog_board_image);
         dialog.setTitle("Save Entire Board as Image:");
 
-
-
+        Button export = (Button) dialog.findViewById(R.id.export);
+        final EditText name = (EditText) dialog.findViewById(R.id.image_name);
+        final EditText description = (EditText) dialog.findViewById(R.id.image_description);
+        name.setText(mainBoard.getName()+"_IMAGE");
+        description.setText(mainBoard.getDescription());
         dialog.show();
         Button declineButton = (Button) dialog.findViewById(R.id.cancel_export);
         // if decline button is clicked, close the custom dialog
@@ -654,14 +733,53 @@ public class LayeredContainer extends LinearLayout {
             }
         });
 
-        Button export = (Button) dialog.findViewById(R.id.export);
-       final EditText name = (EditText) dialog.findViewById(R.id.image_name);
-       final EditText description = (EditText) dialog.findViewById(R.id.image_description);
+
         // if decline button is clicked, close the custom dialog
         export.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 mainBoard.saveImage(name.getText().toString(),description.getText().toString(),getContext());
+                dialog.dismiss();
+            }
+        });
+    }
+
+    public void editBoardDialog(){
+
+        // Create custom dialog object
+        final Dialog dialog = new Dialog(getContext());
+        // Include dialog_size.xml file
+
+
+
+        dialog.setContentView(R.layout.dialog_edit_board);
+        final Board mainBoard = (Board) findViewById(R.id.board);
+        final EditText name = (EditText) dialog.findViewById(R.id.board_name);
+        final EditText description = (EditText) dialog.findViewById(R.id.board_description);
+        final TextView date = (TextView) dialog.findViewById(R.id.date_created);
+        dialog.setTitle("Your Board's Information");
+        name.setText(mainBoard.getName());
+        description.setText(mainBoard.getDescription());
+        date.setText("Date Created: " + mainBoard.getDateCreated());
+
+        dialog.show();
+        Button declineButton = (Button) dialog.findViewById(R.id.cancel_edit);
+        // if decline button is clicked, close the custom dialog
+        declineButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Close dialog
+                dialog.dismiss();
+            }
+        });
+
+        Button saveChanges = (Button) dialog.findViewById(R.id.save_edit);
+        // if decline button is clicked, close the custom dialog
+        saveChanges.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mainBoard.setName(name.getText().toString());
+                mainBoard.setDescription(description.getText().toString());
                 dialog.dismiss();
             }
         });

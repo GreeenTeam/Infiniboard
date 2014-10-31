@@ -380,8 +380,7 @@
                                     android:drawableTop="@drawable/scale"
                                     android:onClick="scaleSelection"
                                     android:background="@drawable/circlebutton"
-                                    android:enabled = "false"
-                                    android:alpha =".5"/>
+                                    />
                                 <Button
                                     android:id = "@+id/rotate"
                                     android:layout_gravity="center|bottom"
@@ -398,8 +397,7 @@
                                     android:drawableTop="@drawable/rotate"
                                     android:onClick="rotateSelection"
                                     android:background="@drawable/circlebutton"
-                                    android:enabled = "false"
-                                    android:alpha =".5"/>
+                                    />
                                 <Button
                                     android:id = "@+id/colorize"
                                     android:layout_gravity="center|bottom"
@@ -664,8 +662,7 @@
                                     android:drawableTop="@drawable/edit_board"
                                     android:onClick="changeBoardProp"
                                     android:background="@drawable/circlebutton"
-                                    android:enabled = "false"
-                                    android:alpha =".5"/>
+                                    />
                                 <Button
                                     android:id = "@+id/go_to_board"
                                     android:layout_gravity="center|bottom"

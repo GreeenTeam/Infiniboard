@@ -1,17 +1,25 @@
 package com.infiniboard.greenteam.infiniboard;
 
+import android.app.Dialog;
 import android.graphics.Color;
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.provider.MediaStore;
+
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.content.Context;
-import java.nio.Buffer;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+
+import java.util.Calendar;
+import java.util.Date;
+
 
 /**
  * Created by Nick on 10/6/2014.
@@ -19,6 +27,9 @@ import java.nio.Buffer;
 
 public class Board extends View {
     //set local variables
+    private String name ;
+    private String description ;
+    private Date timeCreated;
     private Path drawPath;
     private Paint drawPaint, canvasPaint;
     private Bitmap canvasBitmap;
@@ -36,6 +47,7 @@ public class Board extends View {
 
     public Board(Context context, AttributeSet attrs) {
         super(context, attrs);
+        timeCreated = getTimeCreated();
         //initializes the four markers for the tray
         tray[0] = new Marker(0xFF000000,0);
         tray[1] = new Marker(0xFF009150,1);
@@ -153,6 +165,9 @@ public class Board extends View {
                     break;
                 case MotionEvent.ACTION_UP:
                     drawCanvas.drawPath(drawPath, drawPaint);
+                    if(name==null){
+                        askForName();
+                    }
                     drawPath.reset();
                     break;
                 default:
@@ -213,6 +228,53 @@ public class Board extends View {
         canvas.setBitmap(temp);
         MediaStore.Images.Media.insertImage(context.getContentResolver(), temp , name, description);
 
+    }
+
+    public void askForName(){
+
+        // Create custom dialog object
+        final Dialog dialog = new Dialog(getContext());
+        // Include dialog_size.xml file
+
+        dialog.setContentView(R.layout.dialog_new_board);
+        dialog.setTitle("You Started A New Board!");
+
+        dialog.show();
+
+        Button nameIt = (Button) dialog.findViewById(R.id.name);
+        final EditText nameInput = (EditText) dialog.findViewById(R.id.board_name);
+        final EditText descriptionInput = (EditText) dialog.findViewById(R.id.board_description);
+        // if decline button is clicked, close the custom dialog
+        nameIt.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setName(nameInput.getText().toString());
+                setDescription(descriptionInput.getText().toString());
+                dialog.dismiss();
+            }
+        });
+    }
+    private Date getTimeCreated(){
+        Calendar c = Calendar.getInstance();
+        return c.getTime();
+    }
+
+    public String getName(){
+        return name;
+    }
+    public String getDescription(){
+        return description;
+    }
+    public String getDateCreated(){
+        return timeCreated.toString();
+    }
+
+    public void setName(String n){
+         name = n;
+    }
+
+    public void setDescription(String d){
+        description = d;
     }
 
 }
