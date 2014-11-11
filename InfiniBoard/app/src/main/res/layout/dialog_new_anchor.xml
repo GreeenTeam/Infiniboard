@@ -4,29 +4,22 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Name Your Board:"
+        android:text="When you create an Anchor, an anchor is dropped on the current section of your board so that you can quickly navigate to the current section of the board."
+        android:paddingBottom="10dp"
+         />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Name Your Anchor:"
          />
 
     <EditText
         android:layout_width="384dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="right"
-        android:id="@+id/board_name" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Describe Your Board:"
-         />
-
-    <EditText
-        android:layout_width="384dp"
-        android:layout_height="141dp"
-        android:id="@+id/board_description" />
+        android:layout_height="35dp"
+        android:id="@+id/anchor_name" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -41,9 +34,9 @@
             android:layout_marginLeft="10dp"
             android:layout_marginRight="5dp"
             android:layout_marginBottom="20dp"
-            android:text = "Export"
+            android:text = "Drop Anchor"
             android:textAlignment="center"
-            android:id ="@+id/export"
+            android:id ="@+id/create"
             android:layout_gravity="center"/>
 
         <Button
@@ -55,7 +48,7 @@
             android:layout_marginBottom="20dp"
             android:text = "Cancel"
             android:textAlignment="center"
-            android:id ="@+id/cancel_export"
+            android:id ="@+id/cancel_anchor"
             android:layout_gravity="center"/>
     </LinearLayout>
 

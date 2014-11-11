@@ -192,7 +192,6 @@ public class Selector {
 
     }
     public void setSelection(Bitmap b){
-
         selection = b;
         height = b.getHeight();
         width = b.getWidth();

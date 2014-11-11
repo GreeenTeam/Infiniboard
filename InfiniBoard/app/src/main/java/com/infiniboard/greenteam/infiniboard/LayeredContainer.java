@@ -13,11 +13,14 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
@@ -30,6 +33,8 @@ import android.content.DialogInterface;
 import com.larswerkman.holocolorpicker.ColorPicker;
 import com.larswerkman.holocolorpicker.SVBar;
 import com.larswerkman.holocolorpicker.SaturationBar;
+
+import java.util.ArrayList;
 
 public class LayeredContainer extends LinearLayout {
 
@@ -123,11 +128,23 @@ public class LayeredContainer extends LinearLayout {
         }
         //redraw on the screen
         this.invalidate();
+
+    }
+
+    public void goRight(View v){
+        System.out.println("Go RIGHT");
+        mainBoard.goRightSubBoard();
+    }
+
+    public void goLeft(View v){
+        System.out.println("Go LEFT");
+        mainBoard.goLeftSubBoard();
     }
 
     public void changeMarkerTo (View v) {
         int id = v.getId();
         final Board mainBoard = (Board) findViewById(R.id.board);
+
         if( id == R.id.button_1){
             mainBoard.changeMarker(0);
             System.out.println("Marker to Button 1 Color");
@@ -198,6 +215,14 @@ public class LayeredContainer extends LinearLayout {
     }
     public void showAnchorMenu(View v){
         mainMenuMore1.setVisibility(View.GONE);
+        Button goToAnchor = (Button) findViewById(R.id.go_to_anchor);
+        if(mainBoard.anchors.isEmpty()) {
+            goToAnchor.setAlpha(.5f);
+            goToAnchor.setEnabled(false);
+        }else{
+            goToAnchor.setAlpha(1f);
+            goToAnchor.setEnabled(true);
+        }
         backButton.addMenu(mainMenuMore1.getId());
         anchorBubbleMenu.setVisibility(View.VISIBLE);
     }
@@ -302,6 +327,7 @@ public class LayeredContainer extends LinearLayout {
     public void createNewAnchor(View v){
         clearMenus();
         System.out.println("CREATE NEW ANCHOR");
+        createAnchorDialog();
     }
     public void showAnchorGoToMenu(View v){
         clearMenus();
@@ -318,6 +344,7 @@ public class LayeredContainer extends LinearLayout {
         // THIS MIGHT BE MOVED UP
         clearMenus();
         System.out.println("CREATE BOARD");
+        invalidate();
     }
     public void changeBoardProp(View v){
         // THIS MIGHT BE MOVED UP
@@ -351,8 +378,8 @@ public class LayeredContainer extends LinearLayout {
         final Board mainBoard = (Board) findViewById(R.id.board);
         final ImageView brushSizeGraphic = (ImageView) dialog.findViewById(R.id.brush_size_graphic);
         final SeekBar sizeBar = (SeekBar) dialog.findViewById(R.id.size_bar);
-        sizeBar.setProgress(mainBoard.currentMarker.getStrokeWidth() - 10);
-        brushSizeGraphic.getLayoutParams().height = brushSizeGraphic.getLayoutParams().width = mainBoard.currentMarker.getStrokeWidth();
+        sizeBar.setProgress(mainBoard.getCurrentMarker().getStrokeWidth() - 10);
+        brushSizeGraphic.getLayoutParams().height = brushSizeGraphic.getLayoutParams().width = mainBoard.getCurrentMarker().getStrokeWidth();
         dialog.show();
 
         sizeBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -388,7 +415,7 @@ public class LayeredContainer extends LinearLayout {
         resetButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                sizeBar.setProgress(mainBoard.currentMarker.getDefaultSize()-10);
+                sizeBar.setProgress(mainBoard.getCurrentMarker().getDefaultSize()-10);
             }
         });
 
@@ -524,7 +551,7 @@ public class LayeredContainer extends LinearLayout {
         final Board mainBoard = (Board) findViewById(R.id.board);
         final ColorPicker colorPicker = (ColorPicker) dialog.findViewById(R.id.picker);
         final SVBar svBar = (SVBar) dialog.findViewById(R.id.svbar);
-        colorPicker.setOldCenterColor(mainBoard.currentMarker.getColor());
+        colorPicker.setOldCenterColor(mainBoard.getCurrentMarker().getColor());
         colorPicker.addSVBar(svBar);
 
         dialog.show();
@@ -543,7 +570,7 @@ public class LayeredContainer extends LinearLayout {
         resetButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                colorPicker.setColor(mainBoard.currentMarker.getDefaultColor());
+                colorPicker.setColor(mainBoard.getCurrentMarker().getDefaultColor());
             }
         });
 
@@ -552,10 +579,10 @@ public class LayeredContainer extends LinearLayout {
         changeColor.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mainBoard.currentMarker.getID() != 4) {
+                if (mainBoard.getCurrentMarker().getID() != 4) {
                     int newColor = colorPicker.getColor();
                     mainBoard.changeMarkerColor(newColor);
-                    changeButtonColor(mainBoard.currentMarker.getID());
+                    changeButtonColor(mainBoard.getCurrentMarker().getID());
                     dialog.dismiss();
                 }else{
                     System.out.println("CAN'T CHANGE ERASER COLOR");
@@ -646,7 +673,25 @@ public class LayeredContainer extends LinearLayout {
         dialog.setContentView(R.layout.dialog_view_anchors);
         dialog.setTitle("Go To a Different Anchor");
 
+        ListView listView = (ListView) dialog.findViewById(R.id.listView);
 
+        final ArrayList<String> names = new ArrayList<String>();
+        for (int i = 0; i < mainBoard.anchors.size(); ++i) {
+            names.add(mainBoard.anchors.get(i).getAnchorName());
+        }
+
+        listView.setAdapter(new ArrayAdapter<String>(dialog.getContext(),android.R.layout.simple_list_item_1,android.R.id.text1, names));
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, final View view,
+                                    int position, long id) {
+
+                mainBoard.anchors.get(names.indexOf(parent.getItemAtPosition(position))).goToAnchor();
+                dialog.dismiss();
+            }
+
+        });
 
         dialog.show();
         Button declineButton = (Button) dialog.findViewById(R.id.cancel_goto_anchor);
@@ -655,16 +700,6 @@ public class LayeredContainer extends LinearLayout {
             @Override
             public void onClick(View v) {
                 // Close dialog
-                dialog.dismiss();
-            }
-        });
-
-        Button gotoAnchor = (Button) dialog.findViewById(R.id.goto_anchor);
-        gotoAnchor.setEnabled(false);
-        // if decline button is clicked, close the custom dialog
-        gotoAnchor.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
                 dialog.dismiss();
             }
         });
@@ -819,6 +854,39 @@ public class LayeredContainer extends LinearLayout {
         });
     }
 
+    public void createAnchorDialog(){
+
+        // Create custom dialog object
+        final Dialog dialog = new Dialog(getContext());
+        // Include dialog_size.xml file
+
+        dialog.setContentView(R.layout.dialog_new_anchor);
+        dialog.setTitle("Create An Anchor:");
+
+
+
+        dialog.show();
+        Button declineButton = (Button) dialog.findViewById(R.id.cancel_anchor);
+        // if decline button is clicked, close the custom dialog
+        declineButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Close dialog
+                dialog.dismiss();
+            }
+        });
+
+        Button create = (Button) dialog.findViewById(R.id.create);
+        final EditText name = (EditText) dialog.findViewById(R.id.anchor_name);
+        // if decline button is clicked, close the custom dialog
+        create.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mainBoard.createNewAnchor(name.getText().toString());
+                dialog.dismiss();
+            }
+        });
+    }
 
     public void goToPreviousMenu(View v){
         mainBubbleMenu.setVisibility(View.GONE);

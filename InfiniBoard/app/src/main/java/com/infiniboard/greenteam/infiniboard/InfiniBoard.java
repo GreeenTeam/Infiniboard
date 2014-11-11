@@ -1,6 +1,7 @@
 package com.infiniboard.greenteam.infiniboard;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -8,6 +9,10 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.HorizontalScrollView;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
+import android.widget.Scroller;
 
 
 // The Implementation of the Sliding Menu Layout was Developed with the use of a Reference Material
@@ -36,7 +41,7 @@ public class InfiniBoard extends Activity {
 
                 final Board mainBoard = (Board) findViewById(R.id.board);
 
-                if (mainBoard.currentMarker.getID() == 4) {
+                if (mainBoard.getCurrentMarker().getID() == 4) {
                     colorChange.setAlpha((float) .5);
                     colorChange.setEnabled(false);
                 }else {
@@ -70,7 +75,7 @@ public class InfiniBoard extends Activity {
         });
 
 
-      final View intro = findViewById(R.id.intro);
+        final View intro = findViewById(R.id.intro);
         intro.setOnTouchListener(new View.OnTouchListener() {
            @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -196,5 +201,11 @@ public class InfiniBoard extends Activity {
     }
     public void goToPreviousMenu(View v){
         root.goToPreviousMenu(v);
+    }
+    public void goLeft(View v){
+        root.goLeft(v);
+    }
+    public void goRight(View v){
+        root.goRight(v);
     }
 }

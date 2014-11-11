@@ -5,20 +5,25 @@ import android.graphics.Color;
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.Point;
 import android.provider.MediaStore;
-
 import android.util.AttributeSet;
+import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.content.Context;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
-
+import android.widget.RelativeLayout;
+import android.widget.Toast;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+
 
 
 /**
@@ -27,6 +32,7 @@ import java.util.Date;
 
 public class Board extends View {
     //set local variables
+
     private String name ;
     private String description ;
     private Date timeCreated;
@@ -35,7 +41,7 @@ public class Board extends View {
     private Bitmap canvasBitmap;
     private Canvas drawCanvas;
     public Marker[] tray = new Marker[5];
-    public Marker currentMarker;
+    private Marker currentMarker;
     float lastEventX;
     float lastEventY;
     boolean inSelector;
@@ -44,6 +50,10 @@ public class Board extends View {
     Selector selector = new Selector(this);
     boolean inMoveMode = false;
     boolean inPasteMode = false;
+    private final int LIMIT = 6; //Number of SubBoards
+    private ArrayList<Bitmap> subBitmaps = new ArrayList<Bitmap>(0);
+    public ArrayList<Anchor> anchors = new ArrayList<Anchor>(0);
+
 
     public Board(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -89,8 +99,11 @@ public class Board extends View {
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         //view given size
         super.onSizeChanged(w, h, oldw, oldh);
+        System.out.println(w + " "+ h);
         canvasBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+        subBitmaps.add(canvasBitmap);
         drawCanvas = new Canvas(canvasBitmap);
+
     }
 
     //These are the instructions to draw, when ever the user is touching
@@ -130,6 +143,7 @@ public class Board extends View {
                     return false;
             }
         }else if (inMoveMode) {
+            raiseFlag(eventX,eventY);
             switch (event.getAction()){
                 case MotionEvent.ACTION_DOWN:
                     //place selection down
@@ -140,6 +154,7 @@ public class Board extends View {
                     inMoveMode = false;
             }
         }else if (inPasteMode) {
+            raiseFlag(eventX,eventY);
             switch (event.getAction()){
                 case MotionEvent.ACTION_DOWN:
                     //place selection down
@@ -150,37 +165,44 @@ public class Board extends View {
                     inPasteMode = false;
             }
         }else{
-            switch (event.getAction()) {
-                case MotionEvent.ACTION_DOWN:
-                    //set a new starting point
-                    drawPaint.setColor(currentMarker.getColor());
-                    drawPaint.setStrokeWidth(currentMarker.getStrokeWidth());
-                    drawCanvas.drawPoint(eventX, eventY, drawPaint);
-                    drawPath.moveTo(eventX, eventY);
-                    break;
-                case MotionEvent.ACTION_MOVE:
-                    //Connect the points
-                    //This should be slightly smother than the line to became it uses quad equation
-                    drawPath.quadTo(lastEventX, lastEventY, eventX, eventY);
-                    break;
-                case MotionEvent.ACTION_UP:
-                    drawCanvas.drawPath(drawPath, drawPaint);
-                    if(name==null){
-                        askForName();
-                    }
-                    drawPath.reset();
-                    break;
-                default:
-                    return false;
+            if(!(event.getPointerCount()>1)) {
+                if(currentMarker.getID() != 4)
+                    raiseFlag(eventX,eventY);
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        //set a new starting point
+                        drawPaint.setColor(currentMarker.getColor());
+                        drawPaint.setStrokeWidth(currentMarker.getStrokeWidth());
+                        drawCanvas.drawPoint(eventX, eventY, drawPaint);
+                        drawPath.moveTo(eventX, eventY);
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        //Connect the points
+                        //This should be slightly smother than the line to became it uses quad equation
+                        drawPath.quadTo(lastEventX, lastEventY, eventX, eventY);
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        drawCanvas.drawPath(drawPath, drawPaint);
+                        if (name == null) {
+                            firstTimeSequence();
+                        }
+                        drawPath.reset();
+                        break;
+                    default:
+                        return false;
+                }
             }
         }
+        if(allFlagsTrue())
+            expandBoard();
+
         lastEventX = eventX;
         lastEventY = eventY;
         //makes view repaint and call onDraw
         invalidate();
         return true;
     }
-    //Put the below in the Board class
+
 
     public Canvas getCanvas() {
         return drawCanvas;
@@ -189,6 +211,7 @@ public class Board extends View {
     public void setCanvas(Canvas n) {
         drawCanvas = n;
     }
+
     //this will be called when the user selects a different marker
     public void changeMarker(int m){
         if(m==4) {
@@ -197,6 +220,10 @@ public class Board extends View {
             drawPaint.setAntiAlias(true);
         }
         currentMarker = tray[m];
+    }
+
+    public Marker getCurrentMarker() {
+        return currentMarker;
     }
 
     //these will be called when the user changes the properties of an existing marker
@@ -221,13 +248,43 @@ public class Board extends View {
         //Saves selection (as a bitmap) on the device
         //Code Referenced: http://stackoverflow.com/questions/16861753/android-saving-bitmap-to-phone-storage
 
-        Bitmap temp = Bitmap.createBitmap(canvasBitmap.getWidth(),canvasBitmap.getHeight(),canvasBitmap.getConfig());
+        Bitmap temp = Bitmap.createBitmap(canvasBitmap.getWidth()*subBitmaps.size(),canvasBitmap.getHeight(),canvasBitmap.getConfig());
         temp.eraseColor(Color.WHITE);
         Canvas canvas = new Canvas(temp);
-        canvas.drawBitmap(canvasBitmap,0f,0f,null);
+        float x = 0;
+        for(int i = 0 ; i < subBitmaps.size() ; i++){
+            canvas.drawBitmap(subBitmaps.get(i),x,0f,null);
+            x += (float) canvasBitmap.getWidth();
+        }
         canvas.setBitmap(temp);
+
         MediaStore.Images.Media.insertImage(context.getContentResolver(), temp , name, description);
 
+    }
+    public void firstTimeSequence(){
+        helpDialog();
+    }
+
+    public void helpDialog(){
+
+        // Create custom dialog object
+        final Dialog dialog = new Dialog(getContext());
+        // Include dialog_size.xml file
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_help);
+
+        dialog.show();
+
+        Button getStarted = (Button) dialog.findViewById(R.id.button);
+
+        // if decline button is clicked, close the custom dialog
+        getStarted.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                askForName();
+                dialog.dismiss();
+            }
+        });
     }
 
     public void askForName(){
@@ -254,6 +311,29 @@ public class Board extends View {
             }
         });
     }
+
+    public void expandBoard(){
+        colorFlags = new boolean[9];
+        if(subBitmaps.indexOf(canvasBitmap)==subBitmaps.size()-1 && subBitmaps.size()<LIMIT) {
+            WindowManager wm = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
+            Display display = wm.getDefaultDisplay();
+            Point size = new Point();
+            display.getSize(size);
+
+            System.out.println(canvasBitmap.getWidth());
+            Bitmap newBoard = Bitmap.createBitmap(canvasBitmap.getWidth(), canvasBitmap.getHeight(), Bitmap.Config.ARGB_8888);
+            subBitmaps.add(newBoard);
+            System.out.println(subBitmaps.size());
+            RelativeLayout r = (RelativeLayout) (this.getParent()).getParent();
+            Button rightArrow = (Button) r.findViewById(R.id.right_arrow);
+            rightArrow.setVisibility(VISIBLE);
+            Toast.makeText(this.getContext(), "Board Expanded.",
+                    Toast.LENGTH_SHORT).show();
+        }else{
+            System.out.println("NO,NO,NO!");
+        }
+    }
+
     private Date getTimeCreated(){
         Calendar c = Calendar.getInstance();
         return c.getTime();
@@ -277,4 +357,93 @@ public class Board extends View {
         description = d;
     }
 
+    public void goRightSubBoard(){
+        int index = subBitmaps.indexOf(canvasBitmap);
+
+            if (index != subBitmaps.size() - 1) {
+                canvasBitmap = subBitmaps.get(index + 1);
+                drawCanvas = new Canvas(canvasBitmap);
+                invalidate();
+                setArrowVisibility(index + 1);
+            }
+
+
+
+    }
+    public void goLeftSubBoard(){
+        int index = subBitmaps.indexOf(canvasBitmap);
+        if( index != 0 ){
+            canvasBitmap = subBitmaps.get(subBitmaps.indexOf(canvasBitmap)-1);
+            drawCanvas = new Canvas(canvasBitmap);
+            invalidate();
+            setArrowVisibility(index - 1);
+        }
+
+    }
+
+    public void goToSubBoard(int x) {
+        canvasBitmap = subBitmaps.get(x);
+        drawCanvas = new Canvas(canvasBitmap);
+        setArrowVisibility(x);
+        invalidate();
+    }
+
+    public void createNewAnchor(String name){
+        anchors.add(new Anchor(subBitmaps.indexOf(canvasBitmap),name,this));
+    }
+
+    private void setArrowVisibility ( int i ){
+        RelativeLayout r = (RelativeLayout) (this.getParent()).getParent();
+        Button rightArrow = (Button) r.findViewById(R.id.right_arrow);
+        Button leftArrow = (Button) r.findViewById(R.id.left_arrow);
+
+        if(i == 0 && subBitmaps.size()>1){
+            leftArrow.setVisibility(GONE);
+            rightArrow.setVisibility(VISIBLE);
+        }else if(i != 0 && i != subBitmaps.size() - 1 ){
+            rightArrow.setVisibility(VISIBLE);
+            leftArrow.setVisibility(VISIBLE);
+        }else if(i == subBitmaps.size() - 1 && subBitmaps.size()>1){
+            rightArrow.setVisibility(GONE);
+            leftArrow.setVisibility(VISIBLE);
+        }else{
+            leftArrow.setVisibility(GONE);
+            rightArrow.setVisibility(GONE);
+        }
+    }
+
+    boolean colorFlags[] = new boolean[9];
+
+    private void raiseFlag( float x, float y){
+        float subWidth =canvasBitmap.getWidth()/3;
+        float subHeight =canvasBitmap.getHeight()/3;
+        if(x>=0 && x<subWidth && y >= 0 && y<subHeight){
+            colorFlags[0] = true;
+        }else if (x>=subWidth && x<subWidth*2 && y >= 0 && y<subHeight){
+            colorFlags[1] = true;
+        }else if (x>=subWidth*2 && x<subWidth*3 && y >= 0 && y<subHeight){
+            colorFlags[2] = true;
+        }else if(x>=0 && x<subWidth && y >= subHeight && y<subHeight*2){
+            colorFlags[3] = true;
+        }else if (x>=subWidth && x<subWidth*2 && y >= subHeight && y<subHeight*2){
+            colorFlags[4] = true;
+        }else if (x>=subWidth*2 && x<subWidth*3 && y >= subHeight && y<subHeight*2){
+            colorFlags[5] = true;
+        }else if(x>=0 && x<subWidth && y >= subHeight*2 && y<subHeight*3){
+            colorFlags[6] = true;
+        }else if (x>=subWidth && x<subWidth*2 && y >= subHeight*2 && y<subHeight*3){
+            colorFlags[7] = true;
+        }else if (x>=subWidth*2 && x<subWidth*3 && y >= subHeight*2 && y<subHeight*3){
+            colorFlags[8] = true;
+        }
+
+    }
+
+    private boolean allFlagsTrue(){
+        for(int i = 0; i<colorFlags.length ; i++){
+            if(!colorFlags[i])
+                return false;
+        }
+        return true;
+    }
 }

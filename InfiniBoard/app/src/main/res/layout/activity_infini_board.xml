@@ -87,16 +87,24 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <RelativeLayout
+
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="match_parent"
+                    android:id="@+id/contains_board"
+                   >
+
                     <com.infiniboard.greenteam.infiniboard.Board
                         android:id = "@+id/board"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
                         android:gravity = "center"
-                        android:background ="#FFFFFF"/>
-                </RelativeLayout>
+                        android:background ="#FFFFFF"
+                        />
+
+
+
+                </LinearLayout>
 
                 <LinearLayout
                             android:id = "@+id/intro"
@@ -128,6 +136,45 @@
                                 android:fontFamily="sans-serif-light" />
                         </LinearLayout>
 
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical|left"
+
+               >
+
+                <!-- LEft Button -->
+                <Button
+                    android:layout_width="75dp"
+                    android:layout_height="75dp"
+                    android:onClick="goLeft"
+                    android:id="@+id/left_arrow"
+                    android:background = "@drawable/left_arrow"
+                    android:gravity="center"
+                    android:visibility="gone"
+                    />
+
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical|right"
+                >
+
+                <!-- Right Button -->
+                <Button
+                    android:layout_width="75dp"
+                    android:layout_height="75dp"
+                    android:onClick="goRight"
+                    android:id="@+id/right_arrow"
+                    android:background = "@drawable/right_arrow"
+                    android:gravity="center"
+                    android:visibility="gone"
+                    />
+            </RelativeLayout>
+
                 <RelativeLayout
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
@@ -143,9 +190,10 @@
                                 android:background = "@drawable/menu"
                                 android:gravity="center"
                                 />
+                </RelativeLayout>
 
 
-                        </RelativeLayout>
+
 
                 <!-- RADIAL BUTTON -->
 
@@ -579,8 +627,7 @@
                                     android:drawablePadding="-10dp"
                                     android:onClick="createNewAnchor"
                                     android:background="@drawable/circlebutton"
-                                    android:enabled = "false"
-                                    android:alpha =".5"/>
+                                    />
 
                                 <Button
                                     android:id = "@+id/go_to_anchor"
