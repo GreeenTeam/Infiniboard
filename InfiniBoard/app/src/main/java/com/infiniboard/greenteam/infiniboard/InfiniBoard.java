@@ -3,6 +3,7 @@ package com.infiniboard.greenteam.infiniboard;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -13,6 +14,19 @@ import android.widget.HorizontalScrollView;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.Scroller;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.StreamCorruptedException;
+import java.security.spec.EncodedKeySpec;
+import java.util.Scanner;
 
 
 // The Implementation of the Sliding Menu Layout was Developed with the use of a Reference Material
@@ -29,6 +43,80 @@ public class InfiniBoard extends Activity {
         // Sets the root to look at the layout specified in activity_infini_board
         root = (LayeredContainer) this.getLayoutInflater().inflate(R.layout.activity_infini_board,null);
         setContentView(root);
+
+        final Board mainBoard = (Board) findViewById(R.id.board);
+
+        // LOOK FOR CREATED BOARDS
+
+        File boards = new File(getFilesDir(),"/boards");
+
+        if(!boards.exists()) {
+            boards.mkdir();
+            System.out.println(
+                   "HERE"
+            );
+            try {
+
+                String content = "";
+                String filename = "/boards/recent_board.txt";
+                File file = new File(getFilesDir(),filename);
+
+                // if file doesnt exists, then create it
+                if (!file.exists()) {
+                    file.createNewFile();
+                }
+
+                FileWriter fw = new FileWriter(file.getAbsoluteFile());
+                BufferedWriter bw = new BufferedWriter(fw);
+                bw.write(content);
+                bw.close();
+
+                System.out.println("Created: recent_board.txt");
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            try {
+
+                String content = "";
+                String filename = "/boards/board_names.txt";
+                File file = new File(getFilesDir(),filename);
+
+                // if file doesnt exists, then create it
+                if (!file.exists()) {
+                    file.createNewFile();
+                }
+
+                FileWriter fw = new FileWriter(file.getAbsoluteFile());
+                BufferedWriter bw = new BufferedWriter(fw);
+                bw.write(content);
+                bw.close();
+
+                System.out.println("Created: board_names.txt");
+
+            } catch (IOException e) {
+                System.err.println(e.getMessage());
+            }
+
+        }else{
+            try {
+                File recentBoard = new File(getFilesDir(),"/boards/recent_board.txt");
+                Scanner s = new Scanner(recentBoard);
+                String recentBoardName = s.nextLine();
+                s.close();
+                // call LOAD BOARD BY NAME
+                mainBoard.loadBoardByName(recentBoardName);
+                mainBoard.goToSubBoard(0);
+
+            } catch (IOException e){
+                System.err.println(e.getMessage());
+            }
+            final View intro = findViewById(R.id.intro);
+            intro.setVisibility(View.GONE);
+        }
+
+
 
         final Button menu_button = (Button) findViewById(R.id.menu_button);
         menu_button.setOnLongClickListener(new View.OnLongClickListener() {
@@ -70,17 +158,17 @@ public class InfiniBoard extends Activity {
                     System.out.println("IN SELECT MODE -- LONG CLICK -- SHOW BUBBLE MENU");
                     selectmenu.setVisibility(View.VISIBLE);
                 }
+
                 return true;
             }
         });
 
-
         final View intro = findViewById(R.id.intro);
         intro.setOnTouchListener(new View.OnTouchListener() {
-           @Override
+            @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-               intro.setVisibility(View.GONE);
-               return false;
+                intro.setVisibility(View.GONE);
+                return false;
             }
         });
 
@@ -93,9 +181,14 @@ public class InfiniBoard extends Activity {
             }
         });
 
-
     }
-
+    @Override
+    public void onBackPressed()
+    {
+        final Board mainBoard = (Board) findViewById(R.id.board);
+        mainBoard.saveYourSelf();
+        super.onBackPressed();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -207,5 +300,11 @@ public class InfiniBoard extends Activity {
     }
     public void goRight(View v){
         root.goRight(v);
+    }
+    public void showHelp(View v){
+        root.showHelp(v);
+    }
+    public void expandBoard(View v){
+        root.expandBoard(v);
     }
 }

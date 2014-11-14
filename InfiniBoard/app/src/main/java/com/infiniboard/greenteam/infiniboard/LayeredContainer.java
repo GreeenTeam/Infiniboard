@@ -34,7 +34,12 @@ import com.larswerkman.holocolorpicker.ColorPicker;
 import com.larswerkman.holocolorpicker.SVBar;
 import com.larswerkman.holocolorpicker.SaturationBar;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class LayeredContainer extends LinearLayout {
 
@@ -204,6 +209,14 @@ public class LayeredContainer extends LinearLayout {
 
     public void showMainMenuMore1(View v){
         mainBubbleMenu.setVisibility(View.GONE);
+        Button expand = (Button) findViewById(R.id.expandboard);
+        if(!mainBoard.canExpand()) {
+            expand.setAlpha(.5f);
+            expand.setEnabled(false);
+        }else{
+            expand.setAlpha(1f);
+            expand.setEnabled(true);
+        }
         backButton.addMenu(mainBubbleMenu.getId());
         mainMenuMore1.setVisibility(View.VISIBLE);
     }
@@ -343,6 +356,7 @@ public class LayeredContainer extends LinearLayout {
     public void createBoard(View v){
         // THIS MIGHT BE MOVED UP
         clearMenus();
+        createBoardDialog();
         System.out.println("CREATE BOARD");
         invalidate();
     }
@@ -363,6 +377,21 @@ public class LayeredContainer extends LinearLayout {
     public void deleteBoard(View v){
         // THIS MIGHT BE MOVED UP
         clearMenus();
+        mainBoard.deleteBoard();
+        System.out.println("CHANGE BOARD PROPERTIES");
+    }
+
+    public void expandBoard(View v){
+        // THIS MIGHT BE MOVED UP
+        clearMenus();
+        mainBoard.expandBoard();
+        System.out.println("CHANGE BOARD PROPERTIES");
+    }
+
+    public void showHelp(View v){
+        // THIS MIGHT BE MOVED UP
+        clearMenus();
+        mainBoard.helpDialog();
         System.out.println("CHANGE BOARD PROPERTIES");
     }
 
@@ -641,6 +670,44 @@ public class LayeredContainer extends LinearLayout {
         dialog.setTitle("Go To a Different Board");
 
 
+        final ArrayList<String> names = new ArrayList<String>();
+        final ListView listView = (ListView) dialog.findViewById(R.id.listView);
+        try {
+
+
+            String filename = "/boards/board_names.txt";
+            File file = new File(getContext().getFilesDir(), filename);
+
+            // if file doesnt exists, then create it
+            Scanner s = new Scanner(file);
+
+            while (s.hasNext()){
+                names.add(s.nextLine());
+            }
+
+            System.out.println("");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        listView.setAdapter(new ArrayAdapter<String>(dialog.getContext(),android.R.layout.simple_list_item_1,android.R.id.text1, names));
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, final View view,
+                                    int position, long id) {
+                System.out.println(parent.getItemAtPosition(position).toString());
+                if(!mainBoard.getName().equals(parent.getItemAtPosition(position).toString())){
+                    mainBoard.saveYourSelf();
+                    mainBoard.loadBoardByName(parent.getItemAtPosition(position).toString());
+                    mainBoard.goToSubBoard(0);
+                }
+
+                dialog.dismiss();
+            }
+
+        });
 
         dialog.show();
         Button declineButton = (Button) dialog.findViewById(R.id.cancel_goto_board);
@@ -649,16 +716,6 @@ public class LayeredContainer extends LinearLayout {
             @Override
             public void onClick(View v) {
                 // Close dialog
-                dialog.dismiss();
-            }
-        });
-
-        Button gotoBoard = (Button) dialog.findViewById(R.id.goto_board);
-        gotoBoard.setEnabled(false);
-        // if decline button is clicked, close the custom dialog
-        gotoBoard.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
                 dialog.dismiss();
             }
         });
@@ -815,6 +872,7 @@ public class LayeredContainer extends LinearLayout {
             public void onClick(View v) {
                 mainBoard.setName(name.getText().toString());
                 mainBoard.setDescription(description.getText().toString());
+                mainBoard.saveYourSelf();
                 dialog.dismiss();
             }
         });
@@ -883,6 +941,43 @@ public class LayeredContainer extends LinearLayout {
             @Override
             public void onClick(View v) {
                 mainBoard.createNewAnchor(name.getText().toString());
+                dialog.dismiss();
+            }
+        });
+    }
+
+    public void createBoardDialog(){
+
+        // Create custom dialog object
+        final Dialog dialog = new Dialog(getContext());
+        // Include dialog_size.xml file
+
+        dialog.setContentView(R.layout.dialog_new_board);
+        dialog.setTitle("Create An New Board:");
+
+
+
+        dialog.show();
+        Button declineButton = (Button) dialog.findViewById(R.id.cancel);
+        // if decline button is clicked, close the custom dialog
+        declineButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Close dialog
+                dialog.dismiss();
+            }
+        });
+
+        Button create = (Button) dialog.findViewById(R.id.create);
+        final EditText n = (EditText) dialog.findViewById(R.id.board_name);
+        final EditText d = (EditText) dialog.findViewById(R.id.board_description);
+        // if decline button is clicked, close the custom dialog
+        create.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mainBoard.saveYourSelf();
+                mainBoard.createNewBoard(n.getText().toString(),d.getText().toString());
+                mainBoard.goToSubBoard(0);
                 dialog.dismiss();
             }
         });

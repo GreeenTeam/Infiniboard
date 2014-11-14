@@ -319,13 +319,11 @@
                         android:id = "@+id/bubble_menu_main_sub"
                         android:visibility="gone">
 
-
-
                         <Button
                             android:id = "@+id/main_menu_more_1"
                             android:layout_gravity="center|bottom"
-                            android:layout_marginBottom="111.06dp"
-                            android:layout_marginLeft="106.06dp"
+                            android:layout_marginBottom="5dp"
+                            android:layout_marginLeft="150dp"
                             android:layout_width="80dp"
                             android:layout_height="80dp"
                             android:text="More"
@@ -336,6 +334,23 @@
                             android:drawableTop="@drawable/more"
                             android:drawablePadding="-10dp"
                             android:onClick="showMainMenu"
+                            android:background="@drawable/circlebutton"/>
+
+                        <Button
+                            android:id = "@+id/help"
+                            android:layout_gravity="center|bottom"
+                            android:layout_marginBottom="111.06dp"
+                            android:layout_marginLeft="106.06dp"
+                            android:layout_width="80dp"
+                            android:layout_height="80dp"
+                            android:text="Help"
+                            android:textColor="#FFFFFF"
+                            android:textSize="13sp"
+                            android:paddingTop="10dp"
+                            android:paddingBottom="5dp"
+                            android:drawableTop="@drawable/help"
+                            android:drawablePadding="0dp"
+                            android:onClick="showHelp"
                             android:background="@drawable/circlebutton"/>
                         <Button
                             android:id = "@+id/anchors"
@@ -354,10 +369,26 @@
                             android:onClick="showAnchorMenu"
                             android:background="@drawable/circlebutton"/>
                         <Button
-                            android:id = "@+id/boards"
+                            android:id = "@+id/expandboard"
                             android:layout_gravity="center|bottom"
                             android:layout_marginBottom="111.06dp"
                             android:layout_marginLeft="-106.06dp"
+                            android:layout_width="80dp"
+                            android:layout_height="80dp"
+                            android:text="Expand"
+                            android:textColor="#FFFFFF"
+                            android:textSize="13sp"
+                            android:paddingTop="15dp"
+                            android:paddingBottom="5dp"
+                            android:drawableTop="@drawable/expand"
+                            android:drawablePadding="0dp"
+                            android:onClick="expandBoard"
+                            android:background="@drawable/circlebutton"/>
+                        <Button
+                            android:id = "@+id/boards"
+                            android:layout_gravity="center|bottom"
+                            android:layout_marginBottom="5dp"
+                            android:layout_marginLeft="-150dp"
                             android:layout_width="80dp"
                             android:layout_height="80dp"
                             android:text="Boards"
@@ -673,8 +704,7 @@
                                     android:drawablePadding="-10dp"
                                     android:onClick="deleteBoard"
                                     android:background="@drawable/circlebutton"
-                                    android:enabled = "false"
-                                    android:alpha =".5"/>
+                                    />
                                 <Button
                                     android:id = "@+id/new_board"
                                     android:layout_gravity="center|bottom"
@@ -691,8 +721,7 @@
                                     android:drawablePadding="-10dp"
                                     android:onClick="createBoard"
                                     android:background="@drawable/circlebutton"
-                                    android:enabled = "false"
-                                    android:alpha =".5"/>
+                                    />
                                 <Button
                                     android:id = "@+id/board_properties"
                                     android:layout_gravity="center|bottom"

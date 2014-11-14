@@ -41,9 +41,21 @@
             android:layout_marginLeft="10dp"
             android:layout_marginRight="5dp"
             android:layout_marginBottom="20dp"
-            android:text = "Name My Board"
+            android:text = "Create My Board"
             android:textAlignment="center"
-            android:id ="@+id/name"
+            android:id ="@+id/create"
+            android:layout_gravity="center"/>
+
+        <Button
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginBottom="20dp"
+            android:text = "Cancel"
+            android:textAlignment="center"
+            android:id ="@+id/cancel"
             android:layout_gravity="center"/>
 
     </LinearLayout>
