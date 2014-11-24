@@ -20,6 +20,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.w3c.dom.Document;
@@ -213,7 +214,7 @@ public class Board extends View {
                         break;
                     case MotionEvent.ACTION_UP:
                         drawCanvas.drawPath(drawPath, drawPaint);
-                        if (name == null) {
+                        if (!hasName() || name.equals("new_Infiniboard")) {
                             firstTimeSequence();
                         }
                         drawPath.reset();
@@ -312,6 +313,7 @@ public class Board extends View {
         getStarted.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 askForName();
                 dialog.dismiss();
             }
@@ -340,7 +342,6 @@ public class Board extends View {
     }
 
     public void askForName() {
-
         // Create custom dialog object
         final Dialog dialog = new Dialog(getContext());
         // Include dialog_size.xml file
@@ -348,19 +349,39 @@ public class Board extends View {
         dialog.setContentView(R.layout.dialog_new_board);
         dialog.setTitle("You Started A New Board!");
 
+        if(hasName()){
+        if(name.equals("new_Infiniboard")){
+            dialog.findViewById(R.id.cancel).setEnabled(false);
+            removeBoardNameFromFile("new_Infiniboard");
+            String filename = "/boards/board_new_Infiniboard";
+            File file = new File(getContext().getFilesDir(), filename);
+
+            file.delete();
+        }
+        }
+        if(!hasName()){
+            dialog.findViewById(R.id.cancel).setEnabled(false);
+        }
+
+
         dialog.show();
 
         Button nameIt = (Button) dialog.findViewById(R.id.create);
         final EditText nameInput = (EditText) dialog.findViewById(R.id.board_name);
         final EditText descriptionInput = (EditText) dialog.findViewById(R.id.board_description);
-        // if decline button is clicked, close the custom dialog
+
         nameIt.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                setName(nameInput.getText().toString());
-                setDescription(descriptionInput.getText().toString());
-                saveYourSelf();
-                dialog.dismiss();
+                if(!nameInput.getText().toString().equals("")) {
+                    setName(nameInput.getText().toString().replace(' ', '_'));
+                    setDescription(descriptionInput.getText().toString());
+                    saveYourSelf();
+                    dialog.dismiss();
+                }else{
+                    TextView n =(TextView) dialog.findViewById(R.id.name_board_text);
+                    n.setText("Name Your Board:   Must provide a name!!");
+                }
             }
         });
     }
@@ -514,7 +535,8 @@ public class Board extends View {
     }
 
     public void saveYourSelf() {
-        String boardDir = "/boards/board_" + getName();
+        String safeName = getName().replace(' ','_');
+        String boardDir = "/boards/board_" + safeName;
         File board = new File(getContext().getFilesDir(), boardDir);
 
         if( board.exists())
@@ -650,9 +672,10 @@ public class Board extends View {
     public void loadBoardByName(String name) {
         subBitmaps.clear();
         anchors.clear();
+        String safeName = name.replace(' ','_');
         try {
 
-            File fXmlFile = new File(getContext().getFilesDir(), "/boards/board_" + name + "/props.xml");
+            File fXmlFile = new File(getContext().getFilesDir(), "/boards/board_" + safeName + "/props.xml");
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
             Document doc = dBuilder.parse(fXmlFile);
@@ -700,7 +723,7 @@ public class Board extends View {
 
                     System.out.println("SubBitmap ID : " + eElement.getAttribute("id"));
                     System.out.println("File Name : " + eElement.getElementsByTagName("filename").item(0).getTextContent());
-                    File f = new File(getContext().getFilesDir(), "/boards/board_" + name + "/" + eElement.getElementsByTagName("filename").item(0).getTextContent());
+                    File f = new File(getContext().getFilesDir(), "/boards/board_" + safeName + "/" + eElement.getElementsByTagName("filename").item(0).getTextContent());
                     System.out.println(f);
                     Bitmap b = BitmapFactory.decodeFile(f.toString());
 
@@ -766,22 +789,19 @@ public class Board extends View {
         }
     }
 
-    public void removeBoardNameFromFile(){
+    public void removeBoardNameFromFile(String name){
         try {
 
-            String myName = getName();
+            String myName = name;
             String filename = "/boards/board_names.txt";
             File file = new File(getContext().getFilesDir(), filename);
             String contents = "";
-            boolean myNameReached = false;
             Scanner s = new Scanner(file);
             while (s.hasNext()) {
                 String str = s.nextLine();
-                if (str.equals(myName) && !myNameReached) {
-                    myNameReached = true;
-                } else {
+                if (!str.equals(myName))
                     contents = contents + str +"\n";
-                }
+
             }
 
 
@@ -800,7 +820,7 @@ public class Board extends View {
     }
 
     public void deleteBoard(){
-        removeBoardNameFromFile();
+        removeBoardNameFromFile(name);
         String savedName = getName();
         try {
             String filename = "/boards/board_names.txt";
@@ -826,6 +846,54 @@ public class Board extends View {
 
     }
 
+
+    public boolean canDelete(){
+        int numBoards = 0;
+        try {
+            String filename = "/boards/board_names.txt";
+            File file = new File(getContext().getFilesDir(), filename);
+
+            Scanner s = new Scanner(file);
+            while (s.hasNext()) {
+                s.nextLine();
+                numBoards++;
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return numBoards > 1;
+    }
+
+    public boolean canGoTo(){
+        int numBoards = 0;
+        try {
+            String filename = "/boards/board_names.txt";
+            File file = new File(getContext().getFilesDir(), filename);
+
+            Scanner s = new Scanner(file);
+            while (s.hasNext()) {
+                s.nextLine();
+                numBoards++;
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return numBoards > 1;
+    }
+
+    public void changeBoardDir(String previousName){
+        String oldfilename = "/boards/board_"+previousName;
+        removeBoardNameFromFile(previousName);
+        setName(name.replace(' ','_'));
+        String newfilename = "/boards/board_"+name.replace(' ','_');
+        File oldfile = new File(getContext().getFilesDir(), oldfilename);
+        File newfile = new File(getContext().getFilesDir(), newfilename);
+        oldfile.renameTo(newfile);
+        saveYourSelf();
+    }
+
     public void createNewBoard(String n,String d){
         subBitmaps.clear();
         anchors.clear();
@@ -834,7 +902,7 @@ public class Board extends View {
         subBitmaps.add(canvasBitmap);
         drawCanvas = new Canvas(canvasBitmap);
 
-        this.name = n;
+        this.name = n.replace(' ','_');
         this.description = d;
         this.timeCreated = getTimeCreated();
         //initializes the four markers for the tray
@@ -849,6 +917,10 @@ public class Board extends View {
 
         saveYourSelf();
         loadBoardByName(n);
+    }
+
+    public Boolean hasName(){
+        return name != null;
     }
 
 }

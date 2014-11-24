@@ -224,6 +224,22 @@ public class LayeredContainer extends LinearLayout {
     public void showBoardMenu(View v){
         mainMenuMore1.setVisibility(View.GONE);
         backButton.addMenu(mainMenuMore1.getId());
+        Button deleteButton = (Button) findViewById(R.id.delete_board);
+        if(mainBoard.canDelete()){
+            deleteButton.setEnabled(true);
+            deleteButton.setAlpha(1f);
+        }else{
+            deleteButton.setEnabled(false);
+            deleteButton.setAlpha(.5f);
+        }
+        Button gotoButton = (Button) findViewById(R.id.go_to_board);
+        if(mainBoard.canGoTo()){
+            gotoButton.setEnabled(true);
+            gotoButton.setAlpha(1f);
+        }else{
+            gotoButton.setEnabled(false);
+            gotoButton.setAlpha(.5f);
+        }
         boardBubbleMenu.setVisibility(View.VISIBLE);
     }
     public void showAnchorMenu(View v){
@@ -377,7 +393,7 @@ public class LayeredContainer extends LinearLayout {
     public void deleteBoard(View v){
         // THIS MIGHT BE MOVED UP
         clearMenus();
-        mainBoard.deleteBoard();
+        confirmDelete();
         System.out.println("CHANGE BOARD PROPERTIES");
     }
 
@@ -682,7 +698,7 @@ public class LayeredContainer extends LinearLayout {
             Scanner s = new Scanner(file);
 
             while (s.hasNext()){
-                names.add(s.nextLine());
+                names.add(s.nextLine().replace('_',' '));
             }
 
             System.out.println("");
@@ -698,9 +714,9 @@ public class LayeredContainer extends LinearLayout {
             public void onItemClick(AdapterView<?> parent, final View view,
                                     int position, long id) {
                 System.out.println(parent.getItemAtPosition(position).toString());
-                if(!mainBoard.getName().equals(parent.getItemAtPosition(position).toString())){
+                if(!mainBoard.getName().equals(parent.getItemAtPosition(position).toString().replace(' ', '_'))){
                     mainBoard.saveYourSelf();
-                    mainBoard.loadBoardByName(parent.getItemAtPosition(position).toString());
+                    mainBoard.loadBoardByName(parent.getItemAtPosition(position).toString().replace(' ','_'));
                     mainBoard.goToSubBoard(0);
                 }
 
@@ -850,10 +866,11 @@ public class LayeredContainer extends LinearLayout {
         final EditText description = (EditText) dialog.findViewById(R.id.board_description);
         final TextView date = (TextView) dialog.findViewById(R.id.date_created);
         dialog.setTitle("Your Board's Information");
-        name.setText(mainBoard.getName());
+        name.setText(mainBoard.getName().replace('_',' '));
         description.setText(mainBoard.getDescription());
         date.setText("Date Created: " + mainBoard.getDateCreated());
-
+        final String previousName = mainBoard.getName();
+        String previousDescription = mainBoard.getDescription();
         dialog.show();
         Button declineButton = (Button) dialog.findViewById(R.id.cancel_edit);
         // if decline button is clicked, close the custom dialog
@@ -870,9 +887,9 @@ public class LayeredContainer extends LinearLayout {
         saveChanges.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                mainBoard.setName(name.getText().toString());
+                mainBoard.setName(name.getText().toString().replace(' ','_'));
                 mainBoard.setDescription(description.getText().toString());
-                mainBoard.saveYourSelf();
+                mainBoard.changeBoardDir(previousName);
                 dialog.dismiss();
             }
         });
@@ -975,9 +992,44 @@ public class LayeredContainer extends LinearLayout {
         create.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                mainBoard.saveYourSelf();
-                mainBoard.createNewBoard(n.getText().toString(),d.getText().toString());
-                mainBoard.goToSubBoard(0);
+                if(!n.getText().toString().equals("")) {
+                    mainBoard.saveYourSelf();
+                    mainBoard.createNewBoard(n.getText().toString(), d.getText().toString());
+                    mainBoard.goToSubBoard(0);
+                    dialog.dismiss();
+                } else{
+                    TextView n =(TextView) dialog.findViewById(R.id.name_board_text);
+                    n.setText("Name Your Board:   Must provide a name!!");
+                }
+            }
+        });
+    }
+
+    public void confirmDelete(){
+
+        // Create custom dialog object
+        final Dialog dialog = new Dialog(getContext());
+        // Include dialog_size.xml file
+
+        dialog.setContentView(R.layout.dialog_delete);
+
+        dialog.show();
+        Button confirm = (Button) dialog.findViewById(R.id.delete);
+        // if decline button is clicked, close the custom dialog
+        confirm.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Close dialog
+                mainBoard.deleteBoard();
+                dialog.dismiss();
+            }
+        });
+        Button declineButton = (Button) dialog.findViewById(R.id.cancel);
+        // if decline button is clicked, close the custom dialog
+        declineButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Close dialog
                 dialog.dismiss();
             }
         });
@@ -1001,5 +1053,6 @@ public class LayeredContainer extends LinearLayout {
             menu.setVisibility(View.VISIBLE);
         }
     }
+
 
 }

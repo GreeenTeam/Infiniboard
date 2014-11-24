@@ -183,8 +183,8 @@
 
                             <!-- Menu Button -->
                             <Button
-                                android:layout_width="25dp"
-                                android:layout_height="25dp"
+                                android:layout_width="32dp"
+                                android:layout_height="32dp"
                                 android:onClick="toggleMenu"
                                 android:id="@+id/menu_button"
                                 android:background = "@drawable/menu"

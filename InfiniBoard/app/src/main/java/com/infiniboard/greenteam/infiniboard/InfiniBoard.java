@@ -14,6 +14,7 @@ import android.widget.HorizontalScrollView;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.Scroller;
+import android.widget.Toast;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -186,6 +187,11 @@ public class InfiniBoard extends Activity {
     public void onBackPressed()
     {
         final Board mainBoard = (Board) findViewById(R.id.board);
+        if(!mainBoard.hasName()){
+            mainBoard.setName("new_Infiniboard");
+            mainBoard.setDescription("A new Infiniboard.");
+
+        }
         mainBoard.saveYourSelf();
         super.onBackPressed();
     }
