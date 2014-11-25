@@ -191,10 +191,12 @@ public class Selector {
         selection.eraseColor(0xFFffffff);
 
     }
-    public void setSelection(Bitmap b){
+    public void setSelection(Bitmap b, int x, int y){
         selection = b;
         height = b.getHeight();
         width = b.getWidth();
+        currentX = x;
+        currentY = y;
         replacement = Bitmap.createBitmap(b);
         replacement.eraseColor(0xFFffffff);
     }

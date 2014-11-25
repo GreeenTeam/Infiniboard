@@ -163,10 +163,12 @@ public class Board extends View {
                 case MotionEvent.ACTION_UP:
 
                     drawPath.reset();
-                    if ((originX < eventX) && (originY < eventY)) {
-                        selector.setSelection(Bitmap.createBitmap(canvasBitmap, (int) originX, (int) originY, (int) (eventX - originX), (int) (eventY - originY)));
+                    if ((originX < eventX) && (originY < eventY) && (eventX < canvasBitmap.getWidth() && (eventY < canvasBitmap.getHeight()))) {
+                        selector.setSelection(Bitmap.createBitmap(canvasBitmap, (int) originX, (int) originY, (int) (eventX - originX), (int) (eventY - originY)), (int) originX, (int) originY);
                         selector.setCurrentX((int) originX);
                         selector.setCurrentY((int) originY);
+                    } else {
+                        inSelector = false;
                     }
                     drawPaint.setPathEffect(null);
                     break;
@@ -267,10 +269,8 @@ public class Board extends View {
     }
 
     public void addSelectionToCanvas(int x, int y) {
-        drawCanvas.drawBitmap(selector.getReplacement(), originX, originY, null);
+        drawCanvas.drawBitmap(selector.getReplacement(), selector.getCurrentX(), selector.getCurrentY(), null);
         drawCanvas.drawBitmap(selector.getSelection(), x, y, null);
-        originX = x;
-        originY = y;
         invalidate();
     }
 
@@ -439,6 +439,8 @@ public class Board extends View {
     }
 
     public void goRightSubBoard() {
+        inSelector = false;
+        inMoveMode= false;
         int index = subBitmaps.indexOf(canvasBitmap);
 
         if (index != subBitmaps.size() - 1) {
@@ -452,6 +454,8 @@ public class Board extends View {
     }
 
     public void goLeftSubBoard() {
+        inSelector = false;
+        inMoveMode= false;
         int index = subBitmaps.indexOf(canvasBitmap);
         if (index != 0) {
             canvasBitmap = subBitmaps.get(subBitmaps.indexOf(canvasBitmap) - 1);
@@ -463,6 +467,8 @@ public class Board extends View {
     }
 
     public void goToSubBoard(int x) {
+        inSelector = false;
+        inMoveMode= false;
         canvasBitmap = subBitmaps.get(x);
         drawCanvas = new Canvas(canvasBitmap);
         setArrowVisibility(x);
